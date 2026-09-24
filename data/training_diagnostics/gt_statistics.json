@@ -1,0 +1,212 @@
+{
+  "00_00": {
+    "parcel": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 4907,
+      "positive_percentage": 1.872,
+      "connected_components": 1
+    },
+    "building": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 4026,
+      "positive_percentage": 1.536,
+      "connected_components": 1
+    },
+    "road": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 2858,
+      "positive_percentage": 1.09,
+      "connected_components": 2
+    },
+    "edge": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 1015,
+      "positive_percentage": 0.387,
+      "connected_components": 1
+    }
+  },
+  "00_03": {
+    "parcel": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 11518,
+      "positive_percentage": 4.394,
+      "connected_components": 1
+    },
+    "building": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 10468,
+      "positive_percentage": 3.993,
+      "connected_components": 4
+    },
+    "road": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 967,
+      "positive_percentage": 0.369,
+      "connected_components": 10
+    },
+    "edge": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 3025,
+      "positive_percentage": 1.154,
+      "connected_components": 2
+    }
+  },
+  "00_05": {
+    "parcel": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 4860,
+      "positive_percentage": 1.854,
+      "connected_components": 2
+    },
+    "building": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 4941,
+      "positive_percentage": 1.885,
+      "connected_components": 2
+    },
+    "road": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 2611,
+      "positive_percentage": 0.996,
+      "connected_components": 2
+    },
+    "edge": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 1237,
+      "positive_percentage": 0.472,
+      "connected_components": 2
+    }
+  },
+  "00_06": {
+    "parcel": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 13219,
+      "positive_percentage": 5.043,
+      "connected_components": 1
+    },
+    "building": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 10335,
+      "positive_percentage": 3.942,
+      "connected_components": 3
+    },
+    "road": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 353,
+      "positive_percentage": 0.135,
+      "connected_components": 7
+    },
+    "edge": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 2838,
+      "positive_percentage": 1.083,
+      "connected_components": 4
+    }
+  },
+  "00_08": {
+    "parcel": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 10716,
+      "positive_percentage": 4.088,
+      "connected_components": 1
+    },
+    "building": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 12017,
+      "positive_percentage": 4.584,
+      "connected_components": 1
+    },
+    "road": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 731,
+      "positive_percentage": 0.279,
+      "connected_components": 6
+    },
+    "edge": {
+      "dtype": "uint8",
+      "unique": [
+        0,
+        1
+      ],
+      "positive_pixels": 2120,
+      "positive_percentage": 0.809,
+      "connected_components": 3
+    }
+  }
+}

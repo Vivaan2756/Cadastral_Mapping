@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "test_parcel_1",
+        "LADM_Class": "LA_SpatialUnit_Parcel"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.412,
+              23.256
+            ],
+            [
+              77.413,
+              23.256
+            ],
+            [
+              77.413,
+              23.257
+            ],
+            [
+              77.412,
+              23.257
+            ],
+            [
+              77.412,
+              23.256
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

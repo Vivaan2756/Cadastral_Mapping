@@ -1,0 +1,47 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:32643"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_1",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.01
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              746957.6685662302,
+              2573941.792749277
+            ],
+            [
+              746957.5297181526,
+              2573941.7914804416
+            ],
+            [
+              746957.5145183451,
+              2573941.755978284
+            ],
+            [
+              746957.7588835328,
+              2573941.7089870735
+            ],
+            [
+              746957.6685662302,
+              2573941.792749277
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

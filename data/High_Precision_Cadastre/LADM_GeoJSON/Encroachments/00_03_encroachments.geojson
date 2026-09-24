@@ -1,0 +1,247 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:32643"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_1",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.01
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747002.7219527606,
+              2573985.9171316824
+            ],
+            [
+              747002.7268265818,
+              2573985.9160344694
+            ],
+            [
+              747002.9559493549,
+              2573985.867209121
+            ],
+            [
+              747002.8164961125,
+              2573985.9549959833
+            ],
+            [
+              747002.7219527606,
+              2573985.9171316824
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_2",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.01
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747002.2228855975,
+              2573985.6121140085
+            ],
+            [
+              747002.2419701221,
+              2573985.3871385944
+            ],
+            [
+              747002.305487707,
+              2573985.685207646
+            ],
+            [
+              747002.2228855975,
+              2573985.6121140085
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_3",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747001.919180365,
+              2573984.57195751
+            ],
+            [
+              747001.9155268956,
+              2573984.5334717073
+            ],
+            [
+              747001.925624608,
+              2573984.580857255
+            ],
+            [
+              747001.919180365,
+              2573984.57195751
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_4",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.02
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747000.8348124169,
+              2573981.542046432
+            ],
+            [
+              747000.7891476935,
+              2573980.8761298787
+            ],
+            [
+              747000.8082717989,
+              2573980.863884235
+            ],
+            [
+              747000.8332150303,
+              2573980.8971418766
+            ],
+            [
+              747000.8377198365,
+              2573981.5418458856
+            ],
+            [
+              747000.8348124169,
+              2573981.542046432
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_5",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747000.6379344303,
+              2573979.613700721
+            ],
+            [
+              747000.6500179033,
+              2573979.512080145
+            ],
+            [
+              747000.6782137405,
+              2573979.696294635
+            ],
+            [
+              747000.6379344303,
+              2573979.613700721
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_6",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747000.8341012127,
+              2573979.051575398
+            ],
+            [
+              747000.8537689751,
+              2573979.0527295317
+            ],
+            [
+              747000.8149324091,
+              2573979.091566098
+            ],
+            [
+              747000.8341012127,
+              2573979.051575398
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_2_1",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.01
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747002.274753003,
+              2573977.6412617993
+            ],
+            [
+              747002.4447299998,
+              2573977.631846776
+            ],
+            [
+              747002.2171853028,
+              2573977.7365895733
+            ],
+            [
+              747002.274753003,
+              2573977.6412617993
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:32643"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_1",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.02
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747258.7806743736,
+              2573985.254749128
+            ],
+            [
+              747258.7019161966,
+              2573984.918331777
+            ],
+            [
+              747258.9045253795,
+              2573985.3642589203
+            ],
+            [
+              747258.7806743736,
+              2573985.254749128
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_2",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747257.7892924709,
+              2573982.0433251564
+            ],
+            [
+              747257.7892655589,
+              2573982.043102092
+            ],
+            [
+              747257.7893106063,
+              2573982.043325917
+            ],
+            [
+              747257.7892924709,
+              2573982.0433251564
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "LA_Restriction_Encroachment_1_3",
+      "properties": {
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_Restriction_Encroachment",
+        "Area_sq_m": 0.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              747257.5936458212,
+              2573981.172035321
+            ],
+            [
+              747257.6025757117,
+              2573981.1155051882
+            ],
+            [
+              747257.6137088878,
+              2573981.1708220677
+            ],
+            [
+              747257.5936458212,
+              2573981.172035321
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,8471 @@
+{
+  "type": "FeatureCollection",
+  "tile_id": "huzur_mapped_03",
+  "image_width": 1222,
+  "image_height": 1232,
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "Pixel_Space"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "water_huzur_mapped_03_1",
+      "properties": {
+        "type": "water",
+        "source": "AI Mapping",
+        "survey_number": "WT-HZR-03-101",
+        "Area_sq_m": 102002.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_WaterBody"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.0,
+              234.0
+            ],
+            [
+              68.0,
+              556.0
+            ],
+            [
+              390.0,
+              729.0
+            ],
+            [
+              456.0,
+              793.0
+            ],
+            [
+              619.0,
+              883.0
+            ],
+            [
+              1042.0,
+              1059.0
+            ],
+            [
+              1164.0,
+              1084.0
+            ],
+            [
+              1163.0,
+              408.0
+            ],
+            [
+              1137.0,
+              409.0
+            ],
+            [
+              1104.0,
+              462.0
+            ],
+            [
+              1071.0,
+              471.0
+            ],
+            [
+              925.0,
+              428.0
+            ],
+            [
+              795.0,
+              432.0
+            ],
+            [
+              603.0,
+              383.0
+            ],
+            [
+              489.0,
+              400.0
+            ],
+            [
+              319.0,
+              352.0
+            ],
+            [
+              177.0,
+              404.0
+            ],
+            [
+              173.0,
+              378.0
+            ],
+            [
+              267.0,
+              333.0
+            ],
+            [
+              175.0,
+              301.0
+            ],
+            [
+              68.0,
+              234.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_1",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-101",
+        "Area_sq_m": 31.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              750.0,
+              1156.0
+            ],
+            [
+              750.0,
+              1160.0
+            ],
+            [
+              751.0,
+              1161.0
+            ],
+            [
+              780.0,
+              1161.0
+            ],
+            [
+              780.0,
+              1154.0
+            ],
+            [
+              777.0,
+              1154.0
+            ],
+            [
+              776.0,
+              1155.0
+            ],
+            [
+              775.0,
+              1154.0
+            ],
+            [
+              752.0,
+              1154.0
+            ],
+            [
+              750.0,
+              1156.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_2",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-102",
+        "Area_sq_m": 20.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              541.0,
+              1145.0
+            ],
+            [
+              540.0,
+              1146.0
+            ],
+            [
+              540.0,
+              1158.0
+            ],
+            [
+              542.0,
+              1158.0
+            ],
+            [
+              543.0,
+              1159.0
+            ],
+            [
+              543.0,
+              1160.0
+            ],
+            [
+              547.0,
+              1160.0
+            ],
+            [
+              550.0,
+              1155.0
+            ],
+            [
+              550.0,
+              1149.0
+            ],
+            [
+              551.0,
+              1148.0
+            ],
+            [
+              551.0,
+              1147.0
+            ],
+            [
+              549.0,
+              1145.0
+            ],
+            [
+              541.0,
+              1145.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_3",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-103",
+        "Area_sq_m": 62.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              574.0,
+              1126.0
+            ],
+            [
+              574.0,
+              1148.0
+            ],
+            [
+              575.0,
+              1149.0
+            ],
+            [
+              576.0,
+              1148.0
+            ],
+            [
+              592.0,
+              1148.0
+            ],
+            [
+              593.0,
+              1147.0
+            ],
+            [
+              593.0,
+              1128.0
+            ],
+            [
+              591.0,
+              1126.0
+            ],
+            [
+              574.0,
+              1126.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_4",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-104",
+        "Area_sq_m": 21.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              883.0,
+              1122.0
+            ],
+            [
+              876.0,
+              1123.0
+            ],
+            [
+              867.0,
+              1114.0
+            ],
+            [
+              860.0,
+              1127.0
+            ],
+            [
+              860.0,
+              1129.0
+            ],
+            [
+              858.0,
+              1131.0
+            ],
+            [
+              858.0,
+              1133.0
+            ],
+            [
+              856.0,
+              1135.0
+            ],
+            [
+              855.0,
+              1141.0
+            ],
+            [
+              870.0,
+              1122.0
+            ],
+            [
+              879.0,
+              1126.0
+            ],
+            [
+              883.0,
+              1122.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_5",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-105",
+        "Area_sq_m": 224.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.0,
+              1111.0
+            ],
+            [
+              73.0,
+              1161.0
+            ],
+            [
+              103.0,
+              1161.0
+            ],
+            [
+              103.0,
+              1114.0
+            ],
+            [
+              101.0,
+              1111.0
+            ],
+            [
+              73.0,
+              1111.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_6",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-106",
+        "Area_sq_m": 85.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              892.0,
+              1098.0
+            ],
+            [
+              892.0,
+              1120.0
+            ],
+            [
+              917.0,
+              1120.0
+            ],
+            [
+              918.0,
+              1119.0
+            ],
+            [
+              918.0,
+              1098.0
+            ],
+            [
+              892.0,
+              1098.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_7",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-107",
+        "Area_sq_m": 62.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              812.0,
+              1072.0
+            ],
+            [
+              808.0,
+              1072.0
+            ],
+            [
+              804.0,
+              1075.0
+            ],
+            [
+              798.0,
+              1076.0
+            ],
+            [
+              797.0,
+              1080.0
+            ],
+            [
+              793.0,
+              1079.0
+            ],
+            [
+              790.0,
+              1080.0
+            ],
+            [
+              791.0,
+              1082.0
+            ],
+            [
+              790.0,
+              1088.0
+            ],
+            [
+              791.0,
+              1089.0
+            ],
+            [
+              789.0,
+              1097.0
+            ],
+            [
+              794.0,
+              1104.0
+            ],
+            [
+              795.0,
+              1104.0
+            ],
+            [
+              795.0,
+              1101.0
+            ],
+            [
+              810.0,
+              1087.0
+            ],
+            [
+              812.0,
+              1082.0
+            ],
+            [
+              812.0,
+              1072.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_8",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-108",
+        "Area_sq_m": 228.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              139.0,
+              1068.0
+            ],
+            [
+              139.0,
+              1107.0
+            ],
+            [
+              177.0,
+              1107.0
+            ],
+            [
+              178.0,
+              1068.0
+            ],
+            [
+              139.0,
+              1068.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_9",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-109",
+        "Area_sq_m": 680.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              829.0,
+              1054.0
+            ],
+            [
+              794.0,
+              1128.0
+            ],
+            [
+              846.0,
+              1151.0
+            ],
+            [
+              851.0,
+              1139.0
+            ],
+            [
+              851.0,
+              1125.0
+            ],
+            [
+              864.0,
+              1112.0
+            ],
+            [
+              879.0,
+              1077.0
+            ],
+            [
+              829.0,
+              1054.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_10",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-110",
+        "Area_sq_m": 233.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              105.0,
+              1045.0
+            ],
+            [
+              105.0,
+              1107.0
+            ],
+            [
+              107.0,
+              1110.0
+            ],
+            [
+              128.0,
+              1110.0
+            ],
+            [
+              129.0,
+              1045.0
+            ],
+            [
+              105.0,
+              1045.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_11",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-111",
+        "Area_sq_m": 433.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              316.0,
+              1039.0
+            ],
+            [
+              312.0,
+              1089.0
+            ],
+            [
+              368.0,
+              1094.0
+            ],
+            [
+              372.0,
+              1043.0
+            ],
+            [
+              316.0,
+              1039.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_12",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-112",
+        "Area_sq_m": 262.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.0,
+              1028.0
+            ],
+            [
+              73.0,
+              1101.0
+            ],
+            [
+              96.0,
+              1102.0
+            ],
+            [
+              97.0,
+              1028.0
+            ],
+            [
+              73.0,
+              1028.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_13",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-113",
+        "Area_sq_m": 24.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              649.0,
+              996.0
+            ],
+            [
+              646.0,
+              999.0
+            ],
+            [
+              645.0,
+              1002.0
+            ],
+            [
+              649.0,
+              1004.0
+            ],
+            [
+              652.0,
+              1007.0
+            ],
+            [
+              654.0,
+              1007.0
+            ],
+            [
+              658.0,
+              1011.0
+            ],
+            [
+              663.0,
+              1013.0
+            ],
+            [
+              667.0,
+              1008.0
+            ],
+            [
+              663.0,
+              1004.0
+            ],
+            [
+              662.0,
+              1004.0
+            ],
+            [
+              660.0,
+              1002.0
+            ],
+            [
+              658.0,
+              1002.0
+            ],
+            [
+              656.0,
+              1001.0
+            ],
+            [
+              653.0,
+              998.0
+            ],
+            [
+              649.0,
+              996.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_14",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-114",
+        "Area_sq_m": 118.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              270.0,
+              875.0
+            ],
+            [
+              268.0,
+              887.0
+            ],
+            [
+              266.0,
+              890.0
+            ],
+            [
+              267.0,
+              897.0
+            ],
+            [
+              297.0,
+              904.0
+            ],
+            [
+              300.0,
+              903.0
+            ],
+            [
+              304.0,
+              882.0
+            ],
+            [
+              275.0,
+              875.0
+            ],
+            [
+              270.0,
+              875.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_15",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-115",
+        "Area_sq_m": 28.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              374.0,
+              825.0
+            ],
+            [
+              374.0,
+              838.0
+            ],
+            [
+              375.0,
+              838.0
+            ],
+            [
+              376.0,
+              839.0
+            ],
+            [
+              384.0,
+              839.0
+            ],
+            [
+              387.0,
+              836.0
+            ],
+            [
+              387.0,
+              833.0
+            ],
+            [
+              389.0,
+              830.0
+            ],
+            [
+              389.0,
+              825.0
+            ],
+            [
+              374.0,
+              825.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_16",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-116",
+        "Area_sq_m": 151.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              398.0,
+              820.0
+            ],
+            [
+              393.0,
+              832.0
+            ],
+            [
+              393.0,
+              842.0
+            ],
+            [
+              387.0,
+              843.0
+            ],
+            [
+              386.0,
+              847.0
+            ],
+            [
+              417.0,
+              862.0
+            ],
+            [
+              430.0,
+              836.0
+            ],
+            [
+              398.0,
+              820.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_17",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-117",
+        "Area_sq_m": 64.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.0,
+              793.0
+            ],
+            [
+              73.0,
+              817.0
+            ],
+            [
+              77.0,
+              817.0
+            ],
+            [
+              78.0,
+              818.0
+            ],
+            [
+              79.0,
+              817.0
+            ],
+            [
+              89.0,
+              817.0
+            ],
+            [
+              92.0,
+              816.0
+            ],
+            [
+              92.0,
+              800.0
+            ],
+            [
+              85.0,
+              793.0
+            ],
+            [
+              73.0,
+              793.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_18",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-118",
+        "Area_sq_m": 775.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              137.0,
+              787.0
+            ],
+            [
+              137.0,
+              854.0
+            ],
+            [
+              215.0,
+              854.0
+            ],
+            [
+              215.0,
+              803.0
+            ],
+            [
+              211.0,
+              799.0
+            ],
+            [
+              211.0,
+              787.0
+            ],
+            [
+              137.0,
+              787.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_19",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-119",
+        "Area_sq_m": 148.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              129.0,
+              737.0
+            ],
+            [
+              99.0,
+              737.0
+            ],
+            [
+              99.0,
+              766.0
+            ],
+            [
+              108.0,
+              772.0
+            ],
+            [
+              129.0,
+              772.0
+            ],
+            [
+              123.0,
+              769.0
+            ],
+            [
+              126.0,
+              766.0
+            ],
+            [
+              128.0,
+              766.0
+            ],
+            [
+              129.0,
+              769.0
+            ],
+            [
+              129.0,
+              737.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_20",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-120",
+        "Area_sq_m": 131.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              202.0,
+              703.0
+            ],
+            [
+              197.0,
+              704.0
+            ],
+            [
+              184.0,
+              711.0
+            ],
+            [
+              181.0,
+              715.0
+            ],
+            [
+              178.0,
+              716.0
+            ],
+            [
+              177.0,
+              719.0
+            ],
+            [
+              173.0,
+              717.0
+            ],
+            [
+              185.0,
+              741.0
+            ],
+            [
+              191.0,
+              740.0
+            ],
+            [
+              213.0,
+              728.0
+            ],
+            [
+              212.0,
+              723.0
+            ],
+            [
+              202.0,
+              703.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_21",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-121",
+        "Area_sq_m": 39.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              161.0,
+              683.0
+            ],
+            [
+              158.0,
+              684.0
+            ],
+            [
+              158.0,
+              703.0
+            ],
+            [
+              152.0,
+              709.0
+            ],
+            [
+              152.0,
+              721.0
+            ],
+            [
+              157.0,
+              721.0
+            ],
+            [
+              158.0,
+              720.0
+            ],
+            [
+              160.0,
+              712.0
+            ],
+            [
+              164.0,
+              704.0
+            ],
+            [
+              162.0,
+              702.0
+            ],
+            [
+              166.0,
+              698.0
+            ],
+            [
+              167.0,
+              695.0
+            ],
+            [
+              161.0,
+              683.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_22",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-122",
+        "Area_sq_m": 807.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.0,
+              653.0
+            ],
+            [
+              73.0,
+              727.0
+            ],
+            [
+              130.0,
+              727.0
+            ],
+            [
+              148.0,
+              709.0
+            ],
+            [
+              148.0,
+              653.0
+            ],
+            [
+              73.0,
+              653.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_23",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-123",
+        "Area_sq_m": 58.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              935.0,
+              389.0
+            ],
+            [
+              935.0,
+              415.0
+            ],
+            [
+              950.0,
+              415.0
+            ],
+            [
+              950.0,
+              389.0
+            ],
+            [
+              935.0,
+              389.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_24",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-124",
+        "Area_sq_m": 44.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              817.0,
+              365.0
+            ],
+            [
+              817.0,
+              392.0
+            ],
+            [
+              826.0,
+              392.0
+            ],
+            [
+              827.0,
+              391.0
+            ],
+            [
+              828.0,
+              392.0
+            ],
+            [
+              828.0,
+              365.0
+            ],
+            [
+              817.0,
+              365.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_25",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-125",
+        "Area_sq_m": 78.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              781.0,
+              364.0
+            ],
+            [
+              780.0,
+              365.0
+            ],
+            [
+              780.0,
+              394.0
+            ],
+            [
+              797.0,
+              394.0
+            ],
+            [
+              797.0,
+              364.0
+            ],
+            [
+              796.0,
+              363.0
+            ],
+            [
+              781.0,
+              364.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_26",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-126",
+        "Area_sq_m": 195.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              836.0,
+              363.0
+            ],
+            [
+              836.0,
+              400.0
+            ],
+            [
+              871.0,
+              400.0
+            ],
+            [
+              871.0,
+              363.0
+            ],
+            [
+              836.0,
+              363.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_27",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-127",
+        "Area_sq_m": 228.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              739.0,
+              352.0
+            ],
+            [
+              709.0,
+              357.0
+            ],
+            [
+              714.0,
+              405.0
+            ],
+            [
+              745.0,
+              401.0
+            ],
+            [
+              739.0,
+              352.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_28",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-128",
+        "Area_sq_m": 401.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              240.0,
+              368.0
+            ],
+            [
+              242.0,
+              377.0
+            ],
+            [
+              319.0,
+              352.0
+            ],
+            [
+              488.0,
+              400.0
+            ],
+            [
+              603.0,
+              384.0
+            ],
+            [
+              711.0,
+              404.0
+            ],
+            [
+              607.0,
+              379.0
+            ],
+            [
+              492.0,
+              396.0
+            ],
+            [
+              324.0,
+              345.0
+            ],
+            [
+              240.0,
+              368.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_29",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-129",
+        "Area_sq_m": 160.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              915.0,
+              338.0
+            ],
+            [
+              887.0,
+              346.0
+            ],
+            [
+              886.0,
+              348.0
+            ],
+            [
+              897.0,
+              380.0
+            ],
+            [
+              920.0,
+              373.0
+            ],
+            [
+              925.0,
+              370.0
+            ],
+            [
+              915.0,
+              338.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_30",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-130",
+        "Area_sq_m": 57.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              664.0,
+              337.0
+            ],
+            [
+              664.0,
+              352.0
+            ],
+            [
+              665.0,
+              353.0
+            ],
+            [
+              688.0,
+              353.0
+            ],
+            [
+              688.0,
+              337.0
+            ],
+            [
+              664.0,
+              337.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_31",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-131",
+        "Area_sq_m": 39.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              464.0,
+              322.0
+            ],
+            [
+              460.0,
+              326.0
+            ],
+            [
+              460.0,
+              329.0
+            ],
+            [
+              479.0,
+              348.0
+            ],
+            [
+              482.0,
+              347.0
+            ],
+            [
+              485.0,
+              344.0
+            ],
+            [
+              484.0,
+              340.0
+            ],
+            [
+              481.0,
+              338.0
+            ],
+            [
+              471.0,
+              327.0
+            ],
+            [
+              464.0,
+              322.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_32",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-132",
+        "Area_sq_m": 159.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              630.0,
+              318.0
+            ],
+            [
+              630.0,
+              357.0
+            ],
+            [
+              632.0,
+              359.0
+            ],
+            [
+              655.0,
+              359.0
+            ],
+            [
+              656.0,
+              318.0
+            ],
+            [
+              630.0,
+              318.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_33",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-133",
+        "Area_sq_m": 174.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              775.0,
+              304.0
+            ],
+            [
+              774.0,
+              343.0
+            ],
+            [
+              785.0,
+              340.0
+            ],
+            [
+              798.0,
+              340.0
+            ],
+            [
+              800.0,
+              342.0
+            ],
+            [
+              798.0,
+              346.0
+            ],
+            [
+              776.0,
+              346.0
+            ],
+            [
+              802.0,
+              346.0
+            ],
+            [
+              802.0,
+              340.0
+            ],
+            [
+              806.0,
+              341.0
+            ],
+            [
+              805.0,
+              346.0
+            ],
+            [
+              806.0,
+              305.0
+            ],
+            [
+              775.0,
+              304.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_34",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-134",
+        "Area_sq_m": 45.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              820.0,
+              300.0
+            ],
+            [
+              817.0,
+              301.0
+            ],
+            [
+              817.0,
+              339.0
+            ],
+            [
+              824.0,
+              339.0
+            ],
+            [
+              825.0,
+              337.0
+            ],
+            [
+              825.0,
+              302.0
+            ],
+            [
+              820.0,
+              300.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_35",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-135",
+        "Area_sq_m": 25.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              846.0,
+              295.0
+            ],
+            [
+              849.0,
+              308.0
+            ],
+            [
+              857.0,
+              316.0
+            ],
+            [
+              857.0,
+              333.0
+            ],
+            [
+              859.0,
+              333.0
+            ],
+            [
+              861.0,
+              329.0
+            ],
+            [
+              865.0,
+              325.0
+            ],
+            [
+              860.0,
+              318.0
+            ],
+            [
+              860.0,
+              316.0
+            ],
+            [
+              856.0,
+              314.0
+            ],
+            [
+              858.0,
+              307.0
+            ],
+            [
+              856.0,
+              305.0
+            ],
+            [
+              854.0,
+              305.0
+            ],
+            [
+              853.0,
+              301.0
+            ],
+            [
+              846.0,
+              295.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_36",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-136",
+        "Area_sq_m": 93.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              842.0,
+              294.0
+            ],
+            [
+              828.0,
+              297.0
+            ],
+            [
+              835.0,
+              339.0
+            ],
+            [
+              850.0,
+              336.0
+            ],
+            [
+              847.0,
+              325.0
+            ],
+            [
+              846.0,
+              312.0
+            ],
+            [
+              842.0,
+              304.0
+            ],
+            [
+              843.0,
+              298.0
+            ],
+            [
+              842.0,
+              294.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_37",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-137",
+        "Area_sq_m": 34.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              774.0,
+              294.0
+            ],
+            [
+              774.0,
+              301.0
+            ],
+            [
+              807.0,
+              301.0
+            ],
+            [
+              807.0,
+              296.0
+            ],
+            [
+              806.0,
+              294.0
+            ],
+            [
+              774.0,
+              294.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_38",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-138",
+        "Area_sq_m": 20.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              563.0,
+              294.0
+            ],
+            [
+              563.0,
+              303.0
+            ],
+            [
+              578.0,
+              303.0
+            ],
+            [
+              578.0,
+              294.0
+            ],
+            [
+              563.0,
+              294.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_39",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-139",
+        "Area_sq_m": 36.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              740.0,
+              288.0
+            ],
+            [
+              736.0,
+              288.0
+            ],
+            [
+              734.0,
+              290.0
+            ],
+            [
+              724.0,
+              295.0
+            ],
+            [
+              723.0,
+              297.0
+            ],
+            [
+              728.0,
+              307.0
+            ],
+            [
+              735.0,
+              304.0
+            ],
+            [
+              737.0,
+              302.0
+            ],
+            [
+              738.0,
+              303.0
+            ],
+            [
+              740.0,
+              301.0
+            ],
+            [
+              747.0,
+              298.0
+            ],
+            [
+              747.0,
+              296.0
+            ],
+            [
+              745.0,
+              297.0
+            ],
+            [
+              743.0,
+              297.0
+            ],
+            [
+              742.0,
+              296.0
+            ],
+            [
+              740.0,
+              288.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_40",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-140",
+        "Area_sq_m": 52.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              673.0,
+              284.0
+            ],
+            [
+              669.0,
+              284.0
+            ],
+            [
+              659.0,
+              288.0
+            ],
+            [
+              652.0,
+              289.0
+            ],
+            [
+              652.0,
+              297.0
+            ],
+            [
+              656.0,
+              305.0
+            ],
+            [
+              677.0,
+              297.0
+            ],
+            [
+              675.0,
+              291.0
+            ],
+            [
+              675.0,
+              288.0
+            ],
+            [
+              673.0,
+              284.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_41",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-141",
+        "Area_sq_m": 56.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              651.0,
+              284.0
+            ],
+            [
+              631.0,
+              284.0
+            ],
+            [
+              630.0,
+              285.0
+            ],
+            [
+              626.0,
+              285.0
+            ],
+            [
+              627.0,
+              290.0
+            ],
+            [
+              636.0,
+              310.0
+            ],
+            [
+              638.0,
+              310.0
+            ],
+            [
+              644.0,
+              306.0
+            ],
+            [
+              645.0,
+              304.0
+            ],
+            [
+              644.0,
+              303.0
+            ],
+            [
+              645.0,
+              301.0
+            ],
+            [
+              645.0,
+              291.0
+            ],
+            [
+              651.0,
+              284.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_42",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-142",
+        "Area_sq_m": 333.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              883.0,
+              269.0
+            ],
+            [
+              884.0,
+              318.0
+            ],
+            [
+              928.0,
+              319.0
+            ],
+            [
+              929.0,
+              270.0
+            ],
+            [
+              883.0,
+              269.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_43",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-143",
+        "Area_sq_m": 712.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1040.0,
+              260.0
+            ],
+            [
+              1040.0,
+              310.0
+            ],
+            [
+              1135.0,
+              310.0
+            ],
+            [
+              1135.0,
+              260.0
+            ],
+            [
+              1040.0,
+              260.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_44",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-144",
+        "Area_sq_m": 123.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              762.0,
+              255.0
+            ],
+            [
+              754.0,
+              256.0
+            ],
+            [
+              751.0,
+              258.0
+            ],
+            [
+              738.0,
+              261.0
+            ],
+            [
+              736.0,
+              263.0
+            ],
+            [
+              741.0,
+              280.0
+            ],
+            [
+              745.0,
+              283.0
+            ],
+            [
+              748.0,
+              291.0
+            ],
+            [
+              756.0,
+              290.0
+            ],
+            [
+              770.0,
+              285.0
+            ],
+            [
+              769.0,
+              277.0
+            ],
+            [
+              762.0,
+              255.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_45",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-145",
+        "Area_sq_m": 177.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              774.0,
+              254.0
+            ],
+            [
+              774.0,
+              290.0
+            ],
+            [
+              809.0,
+              290.0
+            ],
+            [
+              810.0,
+              301.0
+            ],
+            [
+              810.0,
+              264.0
+            ],
+            [
+              800.0,
+              262.0
+            ],
+            [
+              792.0,
+              254.0
+            ],
+            [
+              774.0,
+              254.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_46",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-146",
+        "Area_sq_m": 35.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              697.0,
+              261.0
+            ],
+            [
+              699.0,
+              261.0
+            ],
+            [
+              702.0,
+              263.0
+            ],
+            [
+              713.0,
+              266.0
+            ],
+            [
+              721.0,
+              262.0
+            ],
+            [
+              723.0,
+              262.0
+            ],
+            [
+              725.0,
+              260.0
+            ],
+            [
+              723.0,
+              259.0
+            ],
+            [
+              716.0,
+              251.0
+            ],
+            [
+              709.0,
+              251.0
+            ],
+            [
+              702.0,
+              258.0
+            ],
+            [
+              699.0,
+              260.0
+            ],
+            [
+              697.0,
+              260.0
+            ],
+            [
+              697.0,
+              261.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_47",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-147",
+        "Area_sq_m": 96.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              270.0,
+              236.0
+            ],
+            [
+              263.0,
+              256.0
+            ],
+            [
+              290.0,
+              266.0
+            ],
+            [
+              297.0,
+              250.0
+            ],
+            [
+              297.0,
+              246.0
+            ],
+            [
+              295.0,
+              244.0
+            ],
+            [
+              289.0,
+              243.0
+            ],
+            [
+              287.0,
+              241.0
+            ],
+            [
+              270.0,
+              236.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_48",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-148",
+        "Area_sq_m": 227.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              620.0,
+              234.0
+            ],
+            [
+              619.0,
+              275.0
+            ],
+            [
+              655.0,
+              275.0
+            ],
+            [
+              656.0,
+              235.0
+            ],
+            [
+              620.0,
+              234.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_49",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-149",
+        "Area_sq_m": 120.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              376.0,
+              239.0
+            ],
+            [
+              369.0,
+              236.0
+            ],
+            [
+              352.0,
+              234.0
+            ],
+            [
+              336.0,
+              255.0
+            ],
+            [
+              355.0,
+              269.0
+            ],
+            [
+              377.0,
+              242.0
+            ],
+            [
+              376.0,
+              239.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_50",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-150",
+        "Area_sq_m": 137.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              862.0,
+              234.0
+            ],
+            [
+              866.0,
+              240.0
+            ],
+            [
+              865.0,
+              254.0
+            ],
+            [
+              887.0,
+              241.0
+            ],
+            [
+              895.0,
+              253.0
+            ],
+            [
+              891.0,
+              259.0
+            ],
+            [
+              919.0,
+              258.0
+            ],
+            [
+              905.0,
+              237.0
+            ],
+            [
+              899.0,
+              234.0
+            ],
+            [
+              900.0,
+              230.0
+            ],
+            [
+              872.0,
+              233.0
+            ],
+            [
+              865.0,
+              230.0
+            ],
+            [
+              862.0,
+              234.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_51",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-151",
+        "Area_sq_m": 2383.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              64.0,
+              228.0
+            ],
+            [
+              65.0,
+              562.0
+            ],
+            [
+              615.0,
+              887.0
+            ],
+            [
+              1168.0,
+              1089.0
+            ],
+            [
+              1168.0,
+              404.0
+            ],
+            [
+              1076.0,
+              465.0
+            ],
+            [
+              717.0,
+              408.0
+            ],
+            [
+              1073.0,
+              472.0
+            ],
+            [
+              1164.0,
+              411.0
+            ],
+            [
+              1153.0,
+              1087.0
+            ],
+            [
+              69.0,
+              555.0
+            ],
+            [
+              68.0,
+              235.0
+            ],
+            [
+              272.0,
+              331.0
+            ],
+            [
+              64.0,
+              228.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_52",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-152",
+        "Area_sq_m": 55.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              808.0,
+              226.0
+            ],
+            [
+              804.0,
+              225.0
+            ],
+            [
+              785.0,
+              243.0
+            ],
+            [
+              783.0,
+              242.0
+            ],
+            [
+              777.0,
+              243.0
+            ],
+            [
+              770.0,
+              242.0
+            ],
+            [
+              770.0,
+              243.0
+            ],
+            [
+              787.0,
+              243.0
+            ],
+            [
+              794.0,
+              250.0
+            ],
+            [
+              807.0,
+              250.0
+            ],
+            [
+              808.0,
+              249.0
+            ],
+            [
+              808.0,
+              226.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_53",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-153",
+        "Area_sq_m": 149.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              202.0,
+              224.0
+            ],
+            [
+              197.0,
+              224.0
+            ],
+            [
+              166.0,
+              240.0
+            ],
+            [
+              176.0,
+              262.0
+            ],
+            [
+              212.0,
+              245.0
+            ],
+            [
+              202.0,
+              224.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_54",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-154",
+        "Area_sq_m": 227.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              819.0,
+              219.0
+            ],
+            [
+              818.0,
+              272.0
+            ],
+            [
+              849.0,
+              272.0
+            ],
+            [
+              851.0,
+              234.0
+            ],
+            [
+              856.0,
+              229.0
+            ],
+            [
+              856.0,
+              219.0
+            ],
+            [
+              849.0,
+              233.0
+            ],
+            [
+              850.0,
+              264.0
+            ],
+            [
+              847.0,
+              271.0
+            ],
+            [
+              844.0,
+              241.0
+            ],
+            [
+              851.0,
+              219.0
+            ],
+            [
+              819.0,
+              219.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_55",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-155",
+        "Area_sq_m": 145.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              746.0,
+              212.0
+            ],
+            [
+              722.0,
+              233.0
+            ],
+            [
+              723.0,
+              237.0
+            ],
+            [
+              740.0,
+              255.0
+            ],
+            [
+              743.0,
+              254.0
+            ],
+            [
+              765.0,
+              233.0
+            ],
+            [
+              746.0,
+              212.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_56",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-156",
+        "Area_sq_m": 37.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              820.0,
+              212.0
+            ],
+            [
+              821.0,
+              215.0
+            ],
+            [
+              856.0,
+              215.0
+            ],
+            [
+              857.0,
+              214.0
+            ],
+            [
+              856.0,
+              208.0
+            ],
+            [
+              850.0,
+              208.0
+            ],
+            [
+              849.0,
+              209.0
+            ],
+            [
+              847.0,
+              208.0
+            ],
+            [
+              823.0,
+              208.0
+            ],
+            [
+              821.0,
+              209.0
+            ],
+            [
+              820.0,
+              212.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_57",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-157",
+        "Area_sq_m": 93.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              247.0,
+              208.0
+            ],
+            [
+              236.0,
+              226.0
+            ],
+            [
+              258.0,
+              240.0
+            ],
+            [
+              260.0,
+              239.0
+            ],
+            [
+              271.0,
+              222.0
+            ],
+            [
+              252.0,
+              209.0
+            ],
+            [
+              247.0,
+              208.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_58",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-158",
+        "Area_sq_m": 183.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              752.0,
+              204.0
+            ],
+            [
+              776.0,
+              238.0
+            ],
+            [
+              812.0,
+              213.0
+            ],
+            [
+              807.0,
+              204.0
+            ],
+            [
+              763.0,
+              204.0
+            ],
+            [
+              761.0,
+              198.0
+            ],
+            [
+              752.0,
+              204.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_59",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-159",
+        "Area_sq_m": 79.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              958.0,
+              195.0
+            ],
+            [
+              951.0,
+              200.0
+            ],
+            [
+              947.0,
+              205.0
+            ],
+            [
+              967.0,
+              231.0
+            ],
+            [
+              969.0,
+              231.0
+            ],
+            [
+              979.0,
+              224.0
+            ],
+            [
+              979.0,
+              222.0
+            ],
+            [
+              958.0,
+              195.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_60",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-160",
+        "Area_sq_m": 74.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              162.0,
+              194.0
+            ],
+            [
+              128.0,
+              202.0
+            ],
+            [
+              120.0,
+              209.0
+            ],
+            [
+              124.0,
+              211.0
+            ],
+            [
+              131.0,
+              205.0
+            ],
+            [
+              134.0,
+              205.0
+            ],
+            [
+              143.0,
+              214.0
+            ],
+            [
+              141.0,
+              231.0
+            ],
+            [
+              146.0,
+              236.0
+            ],
+            [
+              158.0,
+              233.0
+            ],
+            [
+              147.0,
+              222.0
+            ],
+            [
+              146.0,
+              208.0
+            ],
+            [
+              160.0,
+              199.0
+            ],
+            [
+              162.0,
+              194.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_61",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-161",
+        "Area_sq_m": 396.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              347.0,
+              228.0
+            ],
+            [
+              351.0,
+              230.0
+            ],
+            [
+              359.0,
+              222.0
+            ],
+            [
+              374.0,
+              233.0
+            ],
+            [
+              401.0,
+              237.0
+            ],
+            [
+              404.0,
+              231.0
+            ],
+            [
+              398.0,
+              237.0
+            ],
+            [
+              396.0,
+              232.0
+            ],
+            [
+              405.0,
+              223.0
+            ],
+            [
+              410.0,
+              224.0
+            ],
+            [
+              406.0,
+              229.0
+            ],
+            [
+              413.0,
+              224.0
+            ],
+            [
+              409.0,
+              222.0
+            ],
+            [
+              416.0,
+              216.0
+            ],
+            [
+              421.0,
+              217.0
+            ],
+            [
+              424.0,
+              197.0
+            ],
+            [
+              354.0,
+              187.0
+            ],
+            [
+              347.0,
+              228.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_62",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-162",
+        "Area_sq_m": 18.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              160.0,
+              187.0
+            ],
+            [
+              159.0,
+              186.0
+            ],
+            [
+              148.0,
+              186.0
+            ],
+            [
+              141.0,
+              192.0
+            ],
+            [
+              140.0,
+              192.0
+            ],
+            [
+              136.0,
+              196.0
+            ],
+            [
+              139.0,
+              196.0
+            ],
+            [
+              140.0,
+              195.0
+            ],
+            [
+              144.0,
+              195.0
+            ],
+            [
+              145.0,
+              194.0
+            ],
+            [
+              152.0,
+              193.0
+            ],
+            [
+              156.0,
+              191.0
+            ],
+            [
+              160.0,
+              191.0
+            ],
+            [
+              160.0,
+              187.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_63",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-163",
+        "Area_sq_m": 40.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              452.0,
+              181.0
+            ],
+            [
+              451.0,
+              182.0
+            ],
+            [
+              451.0,
+              205.0
+            ],
+            [
+              463.0,
+              205.0
+            ],
+            [
+              464.0,
+              204.0
+            ],
+            [
+              464.0,
+              201.0
+            ],
+            [
+              463.0,
+              200.0
+            ],
+            [
+              462.0,
+              193.0
+            ],
+            [
+              464.0,
+              192.0
+            ],
+            [
+              464.0,
+              188.0
+            ],
+            [
+              463.0,
+              189.0
+            ],
+            [
+              460.0,
+              189.0
+            ],
+            [
+              459.0,
+              188.0
+            ],
+            [
+              459.0,
+              185.0
+            ],
+            [
+              461.0,
+              183.0
+            ],
+            [
+              464.0,
+              184.0
+            ],
+            [
+              464.0,
+              182.0
+            ],
+            [
+              463.0,
+              181.0
+            ],
+            [
+              452.0,
+              181.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_64",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-164",
+        "Area_sq_m": 83.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              804.0,
+              200.0
+            ],
+            [
+              788.0,
+              178.0
+            ],
+            [
+              784.0,
+              179.0
+            ],
+            [
+              768.0,
+              191.0
+            ],
+            [
+              764.0,
+              197.0
+            ],
+            [
+              765.0,
+              200.0
+            ],
+            [
+              768.0,
+              201.0
+            ],
+            [
+              773.0,
+              200.0
+            ],
+            [
+              774.0,
+              201.0
+            ],
+            [
+              777.0,
+              200.0
+            ],
+            [
+              778.0,
+              201.0
+            ],
+            [
+              800.0,
+              201.0
+            ],
+            [
+              801.0,
+              200.0
+            ],
+            [
+              803.0,
+              201.0
+            ],
+            [
+              804.0,
+              200.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_65",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-165",
+        "Area_sq_m": 123.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              350.0,
+              177.0
+            ],
+            [
+              347.0,
+              176.0
+            ],
+            [
+              333.0,
+              179.0
+            ],
+            [
+              313.0,
+              192.0
+            ],
+            [
+              315.0,
+              203.0
+            ],
+            [
+              309.0,
+              211.0
+            ],
+            [
+              312.0,
+              221.0
+            ],
+            [
+              325.0,
+              209.0
+            ],
+            [
+              339.0,
+              208.0
+            ],
+            [
+              337.0,
+              200.0
+            ],
+            [
+              338.0,
+              195.0
+            ],
+            [
+              350.0,
+              177.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_66",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-166",
+        "Area_sq_m": 70.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              215.0,
+              174.0
+            ],
+            [
+              215.0,
+              192.0
+            ],
+            [
+              240.0,
+              192.0
+            ],
+            [
+              241.0,
+              191.0
+            ],
+            [
+              241.0,
+              174.0
+            ],
+            [
+              215.0,
+              174.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_67",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-167",
+        "Area_sq_m": 34.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              951.0,
+              165.0
+            ],
+            [
+              949.0,
+              166.0
+            ],
+            [
+              943.0,
+              166.0
+            ],
+            [
+              941.0,
+              167.0
+            ],
+            [
+              941.0,
+              175.0
+            ],
+            [
+              942.0,
+              176.0
+            ],
+            [
+              942.0,
+              181.0
+            ],
+            [
+              943.0,
+              182.0
+            ],
+            [
+              943.0,
+              186.0
+            ],
+            [
+              944.0,
+              187.0
+            ],
+            [
+              946.0,
+              186.0
+            ],
+            [
+              951.0,
+              186.0
+            ],
+            [
+              952.0,
+              185.0
+            ],
+            [
+              954.0,
+              185.0
+            ],
+            [
+              953.0,
+              171.0
+            ],
+            [
+              952.0,
+              170.0
+            ],
+            [
+              952.0,
+              166.0
+            ],
+            [
+              951.0,
+              165.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_68",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-168",
+        "Area_sq_m": 62.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              243.0,
+              156.0
+            ],
+            [
+              243.0,
+              168.0
+            ],
+            [
+              275.0,
+              168.0
+            ],
+            [
+              275.0,
+              155.0
+            ],
+            [
+              244.0,
+              155.0
+            ],
+            [
+              243.0,
+              156.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_69",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-169",
+        "Area_sq_m": 45.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              440.0,
+              154.0
+            ],
+            [
+              434.0,
+              159.0
+            ],
+            [
+              435.0,
+              171.0
+            ],
+            [
+              433.0,
+              176.0
+            ],
+            [
+              439.0,
+              175.0
+            ],
+            [
+              440.0,
+              174.0
+            ],
+            [
+              446.0,
+              178.0
+            ],
+            [
+              453.0,
+              172.0
+            ],
+            [
+              453.0,
+              168.0
+            ],
+            [
+              451.0,
+              165.0
+            ],
+            [
+              448.0,
+              163.0
+            ],
+            [
+              447.0,
+              160.0
+            ],
+            [
+              442.0,
+              154.0
+            ],
+            [
+              440.0,
+              154.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_70",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-170",
+        "Area_sq_m": 285.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              765.0,
+              151.0
+            ],
+            [
+              765.0,
+              189.0
+            ],
+            [
+              788.0,
+              174.0
+            ],
+            [
+              808.0,
+              200.0
+            ],
+            [
+              817.0,
+              200.0
+            ],
+            [
+              816.0,
+              150.0
+            ],
+            [
+              765.0,
+              151.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_71",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-171",
+        "Area_sq_m": 636.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              821.0,
+              142.0
+            ],
+            [
+              821.0,
+              205.0
+            ],
+            [
+              858.0,
+              205.0
+            ],
+            [
+              860.0,
+              215.0
+            ],
+            [
+              865.0,
+              213.0
+            ],
+            [
+              860.0,
+              210.0
+            ],
+            [
+              862.0,
+              207.0
+            ],
+            [
+              868.0,
+              209.0
+            ],
+            [
+              863.0,
+              207.0
+            ],
+            [
+              876.0,
+              201.0
+            ],
+            [
+              885.0,
+              203.0
+            ],
+            [
+              875.0,
+              206.0
+            ],
+            [
+              888.0,
+              208.0
+            ],
+            [
+              888.0,
+              142.0
+            ],
+            [
+              821.0,
+              142.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_72",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-172",
+        "Area_sq_m": 590.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              475.0,
+              142.0
+            ],
+            [
+              475.0,
+              170.0
+            ],
+            [
+              478.0,
+              169.0
+            ],
+            [
+              484.0,
+              192.0
+            ],
+            [
+              478.0,
+              198.0
+            ],
+            [
+              550.0,
+              198.0
+            ],
+            [
+              550.0,
+              167.0
+            ],
+            [
+              543.0,
+              142.0
+            ],
+            [
+              475.0,
+              142.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_73",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-173",
+        "Area_sq_m": 205.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              545.0,
+              135.0
+            ],
+            [
+              546.0,
+              138.0
+            ],
+            [
+              552.0,
+              138.0
+            ],
+            [
+              554.0,
+              140.0
+            ],
+            [
+              554.0,
+              171.0
+            ],
+            [
+              558.0,
+              180.0
+            ],
+            [
+              568.0,
+              189.0
+            ],
+            [
+              588.0,
+              184.0
+            ],
+            [
+              585.0,
+              168.0
+            ],
+            [
+              578.0,
+              166.0
+            ],
+            [
+              578.0,
+              141.0
+            ],
+            [
+              576.0,
+              135.0
+            ],
+            [
+              545.0,
+              135.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_74",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-174",
+        "Area_sq_m": 127.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              206.0,
+              128.0
+            ],
+            [
+              163.0,
+              131.0
+            ],
+            [
+              161.0,
+              130.0
+            ],
+            [
+              164.0,
+              147.0
+            ],
+            [
+              167.0,
+              150.0
+            ],
+            [
+              207.0,
+              147.0
+            ],
+            [
+              206.0,
+              128.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_75",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-175",
+        "Area_sq_m": 40.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              575.0,
+              128.0
+            ],
+            [
+              572.0,
+              119.0
+            ],
+            [
+              570.0,
+              119.0
+            ],
+            [
+              569.0,
+              120.0
+            ],
+            [
+              565.0,
+              120.0
+            ],
+            [
+              561.0,
+              122.0
+            ],
+            [
+              558.0,
+              122.0
+            ],
+            [
+              554.0,
+              124.0
+            ],
+            [
+              550.0,
+              124.0
+            ],
+            [
+              544.0,
+              126.0
+            ],
+            [
+              543.0,
+              127.0
+            ],
+            [
+              543.0,
+              130.0
+            ],
+            [
+              547.0,
+              132.0
+            ],
+            [
+              549.0,
+              131.0
+            ],
+            [
+              575.0,
+              131.0
+            ],
+            [
+              575.0,
+              128.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_76",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-176",
+        "Area_sq_m": 132.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              413.0,
+              118.0
+            ],
+            [
+              412.0,
+              120.0
+            ],
+            [
+              414.0,
+              124.0
+            ],
+            [
+              409.0,
+              128.0
+            ],
+            [
+              405.0,
+              127.0
+            ],
+            [
+              402.0,
+              131.0
+            ],
+            [
+              414.0,
+              147.0
+            ],
+            [
+              427.0,
+              152.0
+            ],
+            [
+              440.0,
+              141.0
+            ],
+            [
+              442.0,
+              124.0
+            ],
+            [
+              421.0,
+              120.0
+            ],
+            [
+              419.0,
+              117.0
+            ],
+            [
+              416.0,
+              119.0
+            ],
+            [
+              413.0,
+              118.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_77",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-177",
+        "Area_sq_m": 93.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              244.0,
+              142.0
+            ],
+            [
+              256.0,
+              146.0
+            ],
+            [
+              287.0,
+              144.0
+            ],
+            [
+              278.0,
+              132.0
+            ],
+            [
+              261.0,
+              114.0
+            ],
+            [
+              259.0,
+              115.0
+            ],
+            [
+              263.0,
+              123.0
+            ],
+            [
+              244.0,
+              142.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_78",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-178",
+        "Area_sq_m": 72.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              239.0,
+              112.0
+            ],
+            [
+              235.0,
+              113.0
+            ],
+            [
+              232.0,
+              119.0
+            ],
+            [
+              221.0,
+              134.0
+            ],
+            [
+              221.0,
+              136.0
+            ],
+            [
+              223.0,
+              138.0
+            ],
+            [
+              233.0,
+              144.0
+            ],
+            [
+              238.0,
+              139.0
+            ],
+            [
+              239.0,
+              136.0
+            ],
+            [
+              247.0,
+              126.0
+            ],
+            [
+              250.0,
+              120.0
+            ],
+            [
+              239.0,
+              112.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_79",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-179",
+        "Area_sq_m": 1151.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              138.0,
+              105.0
+            ],
+            [
+              59.0,
+              125.0
+            ],
+            [
+              79.0,
+              210.0
+            ],
+            [
+              127.0,
+              199.0
+            ],
+            [
+              147.0,
+              183.0
+            ],
+            [
+              171.0,
+              187.0
+            ],
+            [
+              163.0,
+              154.0
+            ],
+            [
+              155.0,
+              153.0
+            ],
+            [
+              155.0,
+              127.0
+            ],
+            [
+              139.0,
+              126.0
+            ],
+            [
+              138.0,
+              105.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_80",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-180",
+        "Area_sq_m": 153.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              351.0,
+              105.0
+            ],
+            [
+              348.0,
+              104.0
+            ],
+            [
+              334.0,
+              107.0
+            ],
+            [
+              314.0,
+              122.0
+            ],
+            [
+              316.0,
+              136.0
+            ],
+            [
+              324.0,
+              137.0
+            ],
+            [
+              358.0,
+              130.0
+            ],
+            [
+              359.0,
+              127.0
+            ],
+            [
+              356.0,
+              112.0
+            ],
+            [
+              351.0,
+              105.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_81",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-181",
+        "Area_sq_m": 35.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              142.0,
+              103.0
+            ],
+            [
+              141.0,
+              105.0
+            ],
+            [
+              142.0,
+              107.0
+            ],
+            [
+              142.0,
+              116.0
+            ],
+            [
+              141.0,
+              117.0
+            ],
+            [
+              141.0,
+              119.0
+            ],
+            [
+              142.0,
+              120.0
+            ],
+            [
+              142.0,
+              124.0
+            ],
+            [
+              144.0,
+              123.0
+            ],
+            [
+              145.0,
+              124.0
+            ],
+            [
+              147.0,
+              124.0
+            ],
+            [
+              148.0,
+              123.0
+            ],
+            [
+              153.0,
+              123.0
+            ],
+            [
+              154.0,
+              124.0
+            ],
+            [
+              155.0,
+              123.0
+            ],
+            [
+              155.0,
+              120.0
+            ],
+            [
+              154.0,
+              119.0
+            ],
+            [
+              154.0,
+              116.0
+            ],
+            [
+              153.0,
+              115.0
+            ],
+            [
+              153.0,
+              112.0
+            ],
+            [
+              152.0,
+              111.0
+            ],
+            [
+              152.0,
+              108.0
+            ],
+            [
+              151.0,
+              107.0
+            ],
+            [
+              151.0,
+              104.0
+            ],
+            [
+              150.0,
+              102.0
+            ],
+            [
+              144.0,
+              102.0
+            ],
+            [
+              142.0,
+              103.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_82",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-182",
+        "Area_sq_m": 257.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              694.0,
+              101.0
+            ],
+            [
+              693.0,
+              103.0
+            ],
+            [
+              660.0,
+              103.0
+            ],
+            [
+              649.0,
+              107.0
+            ],
+            [
+              664.0,
+              147.0
+            ],
+            [
+              705.0,
+              131.0
+            ],
+            [
+              694.0,
+              101.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_83",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-183",
+        "Area_sq_m": 339.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              606.0,
+              92.0
+            ],
+            [
+              606.0,
+              134.0
+            ],
+            [
+              582.0,
+              135.0
+            ],
+            [
+              588.0,
+              164.0
+            ],
+            [
+              631.0,
+              164.0
+            ],
+            [
+              632.0,
+              103.0
+            ],
+            [
+              609.0,
+              102.0
+            ],
+            [
+              606.0,
+              92.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_84",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-184",
+        "Area_sq_m": 288.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              942.0,
+              91.0
+            ],
+            [
+              888.0,
+              130.0
+            ],
+            [
+              900.0,
+              148.0
+            ],
+            [
+              907.0,
+              147.0
+            ],
+            [
+              900.0,
+              146.0
+            ],
+            [
+              901.0,
+              143.0
+            ],
+            [
+              908.0,
+              143.0
+            ],
+            [
+              911.0,
+              147.0
+            ],
+            [
+              913.0,
+              143.0
+            ],
+            [
+              914.0,
+              147.0
+            ],
+            [
+              907.0,
+              150.0
+            ],
+            [
+              910.0,
+              151.0
+            ],
+            [
+              959.0,
+              114.0
+            ],
+            [
+              942.0,
+              91.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_85",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-185",
+        "Area_sq_m": 22.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              611.0,
+              93.0
+            ],
+            [
+              612.0,
+              94.0
+            ],
+            [
+              612.0,
+              99.0
+            ],
+            [
+              629.0,
+              99.0
+            ],
+            [
+              630.0,
+              100.0
+            ],
+            [
+              631.0,
+              99.0
+            ],
+            [
+              633.0,
+              99.0
+            ],
+            [
+              633.0,
+              96.0
+            ],
+            [
+              632.0,
+              95.0
+            ],
+            [
+              633.0,
+              94.0
+            ],
+            [
+              633.0,
+              92.0
+            ],
+            [
+              615.0,
+              92.0
+            ],
+            [
+              613.0,
+              91.0
+            ],
+            [
+              611.0,
+              93.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_86",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-186",
+        "Area_sq_m": 123.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              583.0,
+              91.0
+            ],
+            [
+              581.0,
+              93.0
+            ],
+            [
+              581.0,
+              131.0
+            ],
+            [
+              601.0,
+              132.0
+            ],
+            [
+              603.0,
+              126.0
+            ],
+            [
+              603.0,
+              93.0
+            ],
+            [
+              601.0,
+              91.0
+            ],
+            [
+              583.0,
+              91.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_87",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-187",
+        "Area_sq_m": 67.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              456.0,
+              93.0
+            ],
+            [
+              452.0,
+              89.0
+            ],
+            [
+              419.0,
+              90.0
+            ],
+            [
+              400.0,
+              110.0
+            ],
+            [
+              409.0,
+              111.0
+            ],
+            [
+              429.0,
+              101.0
+            ],
+            [
+              422.0,
+              101.0
+            ],
+            [
+              414.0,
+              105.0
+            ],
+            [
+              413.0,
+              103.0
+            ],
+            [
+              417.0,
+              99.0
+            ],
+            [
+              427.0,
+              97.0
+            ],
+            [
+              440.0,
+              99.0
+            ],
+            [
+              456.0,
+              95.0
+            ],
+            [
+              456.0,
+              93.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_88",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-188",
+        "Area_sq_m": 98.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              330.0,
+              88.0
+            ],
+            [
+              324.0,
+              92.0
+            ],
+            [
+              321.0,
+              88.0
+            ],
+            [
+              317.0,
+              88.0
+            ],
+            [
+              316.0,
+              91.0
+            ],
+            [
+              313.0,
+              91.0
+            ],
+            [
+              311.0,
+              88.0
+            ],
+            [
+              304.0,
+              88.0
+            ],
+            [
+              302.0,
+              92.0
+            ],
+            [
+              302.0,
+              111.0
+            ],
+            [
+              306.0,
+              118.0
+            ],
+            [
+              305.0,
+              122.0
+            ],
+            [
+              299.0,
+              117.0
+            ],
+            [
+              300.0,
+              113.0
+            ],
+            [
+              298.0,
+              112.0
+            ],
+            [
+              300.0,
+              121.0
+            ],
+            [
+              304.0,
+              125.0
+            ],
+            [
+              310.0,
+              120.0
+            ],
+            [
+              308.0,
+              115.0
+            ],
+            [
+              309.0,
+              109.0
+            ],
+            [
+              329.0,
+              105.0
+            ],
+            [
+              338.0,
+              99.0
+            ],
+            [
+              330.0,
+              88.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_89",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-189",
+        "Area_sq_m": 61.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              274.0,
+              88.0
+            ],
+            [
+              261.0,
+              99.0
+            ],
+            [
+              288.0,
+              134.0
+            ],
+            [
+              289.0,
+              131.0
+            ],
+            [
+              284.0,
+              127.0
+            ],
+            [
+              284.0,
+              120.0
+            ],
+            [
+              280.0,
+              115.0
+            ],
+            [
+              278.0,
+              106.0
+            ],
+            [
+              278.0,
+              96.0
+            ],
+            [
+              281.0,
+              88.0
+            ],
+            [
+              274.0,
+              88.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_90",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-190",
+        "Area_sq_m": 44.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              204.0,
+              88.0
+            ],
+            [
+              202.0,
+              90.0
+            ],
+            [
+              202.0,
+              95.0
+            ],
+            [
+              206.0,
+              96.0
+            ],
+            [
+              214.0,
+              104.0
+            ],
+            [
+              213.0,
+              108.0
+            ],
+            [
+              207.0,
+              117.0
+            ],
+            [
+              207.0,
+              120.0
+            ],
+            [
+              216.0,
+              126.0
+            ],
+            [
+              223.0,
+              118.0
+            ],
+            [
+              222.0,
+              104.0
+            ],
+            [
+              221.0,
+              102.0
+            ],
+            [
+              216.0,
+              104.0
+            ],
+            [
+              209.0,
+              98.0
+            ],
+            [
+              210.0,
+              92.0
+            ],
+            [
+              206.0,
+              92.0
+            ],
+            [
+              204.0,
+              88.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_91",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-191",
+        "Area_sq_m": 410.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              770.0,
+              83.0
+            ],
+            [
+              741.0,
+              90.0
+            ],
+            [
+              739.0,
+              96.0
+            ],
+            [
+              723.0,
+              95.0
+            ],
+            [
+              701.0,
+              101.0
+            ],
+            [
+              710.0,
+              138.0
+            ],
+            [
+              779.0,
+              120.0
+            ],
+            [
+              770.0,
+              83.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_92",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-192",
+        "Area_sq_m": 28.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1017.0,
+              79.0
+            ],
+            [
+              1007.0,
+              89.0
+            ],
+            [
+              1016.0,
+              98.0
+            ],
+            [
+              1018.0,
+              96.0
+            ],
+            [
+              1019.0,
+              96.0
+            ],
+            [
+              1020.0,
+              95.0
+            ],
+            [
+              1020.0,
+              94.0
+            ],
+            [
+              1026.0,
+              88.0
+            ],
+            [
+              1025.0,
+              87.0
+            ],
+            [
+              1025.0,
+              86.0
+            ],
+            [
+              1023.0,
+              84.0
+            ],
+            [
+              1022.0,
+              84.0
+            ],
+            [
+              1019.0,
+              80.0
+            ],
+            [
+              1018.0,
+              80.0
+            ],
+            [
+              1017.0,
+              79.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_93",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-193",
+        "Area_sq_m": 27.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              982.0,
+              74.0
+            ],
+            [
+              982.0,
+              80.0
+            ],
+            [
+              1008.0,
+              80.0
+            ],
+            [
+              1008.0,
+              75.0
+            ],
+            [
+              1007.0,
+              74.0
+            ],
+            [
+              1008.0,
+              73.0
+            ],
+            [
+              983.0,
+              73.0
+            ],
+            [
+              982.0,
+              74.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_94",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-194",
+        "Area_sq_m": 116.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              791.0,
+              74.0
+            ],
+            [
+              791.0,
+              93.0
+            ],
+            [
+              830.0,
+              93.0
+            ],
+            [
+              830.0,
+              73.0
+            ],
+            [
+              792.0,
+              73.0
+            ],
+            [
+              791.0,
+              74.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_95",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-195",
+        "Area_sq_m": 97.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              700.0,
+              74.0
+            ],
+            [
+              700.0,
+              91.0
+            ],
+            [
+              722.0,
+              91.0
+            ],
+            [
+              723.0,
+              90.0
+            ],
+            [
+              727.0,
+              91.0
+            ],
+            [
+              737.0,
+              88.0
+            ],
+            [
+              737.0,
+              73.0
+            ],
+            [
+              701.0,
+              73.0
+            ],
+            [
+              700.0,
+              74.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_96",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-196",
+        "Area_sq_m": 241.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              612.0,
+              73.0
+            ],
+            [
+              612.0,
+              88.0
+            ],
+            [
+              634.0,
+              88.0
+            ],
+            [
+              636.0,
+              99.0
+            ],
+            [
+              661.0,
+              99.0
+            ],
+            [
+              690.0,
+              88.0
+            ],
+            [
+              690.0,
+              73.0
+            ],
+            [
+              612.0,
+              73.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_97",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-197",
+        "Area_sq_m": 971.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              464.0,
+              128.0
+            ],
+            [
+              540.0,
+              131.0
+            ],
+            [
+              540.0,
+              124.0
+            ],
+            [
+              572.0,
+              115.0
+            ],
+            [
+              578.0,
+              127.0
+            ],
+            [
+              578.0,
+              90.0
+            ],
+            [
+              601.0,
+              89.0
+            ],
+            [
+              602.0,
+              73.0
+            ],
+            [
+              464.0,
+              73.0
+            ],
+            [
+              464.0,
+              111.0
+            ],
+            [
+              470.0,
+              126.0
+            ],
+            [
+              464.0,
+              123.0
+            ],
+            [
+              464.0,
+              128.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_98",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-198",
+        "Area_sq_m": 21.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              298.0,
+              83.0
+            ],
+            [
+              298.0,
+              84.0
+            ],
+            [
+              299.0,
+              85.0
+            ],
+            [
+              300.0,
+              85.0
+            ],
+            [
+              301.0,
+              84.0
+            ],
+            [
+              302.0,
+              84.0
+            ],
+            [
+              303.0,
+              85.0
+            ],
+            [
+              307.0,
+              85.0
+            ],
+            [
+              308.0,
+              84.0
+            ],
+            [
+              311.0,
+              84.0
+            ],
+            [
+              312.0,
+              85.0
+            ],
+            [
+              314.0,
+              85.0
+            ],
+            [
+              315.0,
+              84.0
+            ],
+            [
+              315.0,
+              82.0
+            ],
+            [
+              314.0,
+              81.0
+            ],
+            [
+              313.0,
+              76.0
+            ],
+            [
+              311.0,
+              73.0
+            ],
+            [
+              305.0,
+              73.0
+            ],
+            [
+              305.0,
+              74.0
+            ],
+            [
+              301.0,
+              78.0
+            ],
+            [
+              301.0,
+              79.0
+            ],
+            [
+              298.0,
+              83.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_99",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-199",
+        "Area_sq_m": 115.6,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              208.0,
+              73.0
+            ],
+            [
+              208.0,
+              85.0
+            ],
+            [
+              214.0,
+              88.0
+            ],
+            [
+              260.0,
+              88.0
+            ],
+            [
+              260.0,
+              73.0
+            ],
+            [
+              208.0,
+              73.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_100",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-200",
+        "Area_sq_m": 361.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              142.0,
+              73.0
+            ],
+            [
+              142.0,
+              99.0
+            ],
+            [
+              151.0,
+              98.0
+            ],
+            [
+              154.0,
+              101.0
+            ],
+            [
+              159.0,
+              123.0
+            ],
+            [
+              198.0,
+              123.0
+            ],
+            [
+              198.0,
+              99.0
+            ],
+            [
+              190.0,
+              99.0
+            ],
+            [
+              198.0,
+              88.0
+            ],
+            [
+              198.0,
+              73.0
+            ],
+            [
+              142.0,
+              73.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_101",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-201",
+        "Area_sq_m": 117.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              105.0,
+              73.0
+            ],
+            [
+              105.0,
+              103.0
+            ],
+            [
+              131.0,
+              103.0
+            ],
+            [
+              131.0,
+              73.0
+            ],
+            [
+              105.0,
+              73.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "building_huzur_mapped_03_102",
+      "properties": {
+        "type": "building",
+        "source": "AI Mapping",
+        "survey_number": "BLD-HZR-03-202",
+        "Area_sq_m": 421.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Building"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              332.0,
+              73.0
+            ],
+            [
+              349.0,
+              97.0
+            ],
+            [
+              357.0,
+              101.0
+            ],
+            [
+              359.0,
+              111.0
+            ],
+            [
+              368.0,
+              122.0
+            ],
+            [
+              387.0,
+              116.0
+            ],
+            [
+              416.0,
+              80.0
+            ],
+            [
+              453.0,
+              79.0
+            ],
+            [
+              451.0,
+              72.0
+            ],
+            [
+              332.0,
+              73.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_1",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-101",
+        "Area_sq_m": 128.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              674.0,
+              1104.0
+            ],
+            [
+              680.0,
+              1106.0
+            ],
+            [
+              691.0,
+              1104.0
+            ],
+            [
+              692.0,
+              1107.0
+            ],
+            [
+              693.0,
+              1103.0
+            ],
+            [
+              697.0,
+              1103.0
+            ],
+            [
+              699.0,
+              1094.0
+            ],
+            [
+              698.0,
+              1096.0
+            ],
+            [
+              693.0,
+              1095.0
+            ],
+            [
+              697.0,
+              1071.0
+            ],
+            [
+              700.0,
+              1063.0
+            ],
+            [
+              706.0,
+              1058.0
+            ],
+            [
+              719.0,
+              1063.0
+            ],
+            [
+              744.0,
+              1081.0
+            ],
+            [
+              747.0,
+              1086.0
+            ],
+            [
+              750.0,
+              1085.0
+            ],
+            [
+              751.0,
+              1078.0
+            ],
+            [
+              724.0,
+              1058.0
+            ],
+            [
+              712.0,
+              1052.0
+            ],
+            [
+              699.0,
+              1052.0
+            ],
+            [
+              695.0,
+              1049.0
+            ],
+            [
+              699.0,
+              1054.0
+            ],
+            [
+              693.0,
+              1061.0
+            ],
+            [
+              690.0,
+              1080.0
+            ],
+            [
+              687.0,
+              1084.0
+            ],
+            [
+              688.0,
+              1090.0
+            ],
+            [
+              681.0,
+              1098.0
+            ],
+            [
+              675.0,
+              1099.0
+            ],
+            [
+              674.0,
+              1104.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_2",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-102",
+        "Area_sq_m": 477.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              787.0,
+              1046.0
+            ],
+            [
+              782.0,
+              1077.0
+            ],
+            [
+              790.0,
+              1076.0
+            ],
+            [
+              793.0,
+              1049.0
+            ],
+            [
+              808.0,
+              1039.0
+            ],
+            [
+              820.0,
+              1045.0
+            ],
+            [
+              816.0,
+              1049.0
+            ],
+            [
+              855.0,
+              1047.0
+            ],
+            [
+              875.0,
+              1062.0
+            ],
+            [
+              869.0,
+              1066.0
+            ],
+            [
+              915.0,
+              1058.0
+            ],
+            [
+              962.0,
+              1087.0
+            ],
+            [
+              992.0,
+              1091.0
+            ],
+            [
+              976.0,
+              1095.0
+            ],
+            [
+              997.0,
+              1103.0
+            ],
+            [
+              994.0,
+              1144.0
+            ],
+            [
+              988.0,
+              1145.0
+            ],
+            [
+              984.0,
+              1165.0
+            ],
+            [
+              1000.0,
+              1165.0
+            ],
+            [
+              1013.0,
+              1095.0
+            ],
+            [
+              997.0,
+              1084.0
+            ],
+            [
+              965.0,
+              1073.0
+            ],
+            [
+              973.0,
+              1078.0
+            ],
+            [
+              959.0,
+              1078.0
+            ],
+            [
+              919.0,
+              1052.0
+            ],
+            [
+              884.0,
+              1058.0
+            ],
+            [
+              866.0,
+              1046.0
+            ],
+            [
+              882.0,
+              1049.0
+            ],
+            [
+              864.0,
+              1035.0
+            ],
+            [
+              870.0,
+              1040.0
+            ],
+            [
+              863.0,
+              1044.0
+            ],
+            [
+              799.0,
+              1033.0
+            ],
+            [
+              787.0,
+              1046.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_3",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-103",
+        "Area_sq_m": 673.0,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              168.0,
+              989.0
+            ],
+            [
+              199.0,
+              997.0
+            ],
+            [
+              186.0,
+              1036.0
+            ],
+            [
+              209.0,
+              990.0
+            ],
+            [
+              255.0,
+              989.0
+            ],
+            [
+              319.0,
+              1013.0
+            ],
+            [
+              372.0,
+              1017.0
+            ],
+            [
+              441.0,
+              1045.0
+            ],
+            [
+              645.0,
+              1087.0
+            ],
+            [
+              612.0,
+              1067.0
+            ],
+            [
+              562.0,
+              1068.0
+            ],
+            [
+              524.0,
+              1046.0
+            ],
+            [
+              492.0,
+              1050.0
+            ],
+            [
+              401.0,
+              1022.0
+            ],
+            [
+              421.0,
+              986.0
+            ],
+            [
+              415.0,
+              965.0
+            ],
+            [
+              404.0,
+              966.0
+            ],
+            [
+              412.0,
+              991.0
+            ],
+            [
+              384.0,
+              1016.0
+            ],
+            [
+              321.0,
+              1007.0
+            ],
+            [
+              289.0,
+              989.0
+            ],
+            [
+              212.0,
+              985.0
+            ],
+            [
+              185.0,
+              970.0
+            ],
+            [
+              168.0,
+              989.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_4",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-104",
+        "Area_sq_m": 98.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              658.0,
+              921.0
+            ],
+            [
+              659.0,
+              926.0
+            ],
+            [
+              676.0,
+              945.0
+            ],
+            [
+              700.0,
+              957.0
+            ],
+            [
+              714.0,
+              957.0
+            ],
+            [
+              719.0,
+              955.0
+            ],
+            [
+              723.0,
+              969.0
+            ],
+            [
+              726.0,
+              972.0
+            ],
+            [
+              731.0,
+              971.0
+            ],
+            [
+              731.0,
+              968.0
+            ],
+            [
+              727.0,
+              963.0
+            ],
+            [
+              726.0,
+              944.0
+            ],
+            [
+              722.0,
+              944.0
+            ],
+            [
+              710.0,
+              952.0
+            ],
+            [
+              698.0,
+              950.0
+            ],
+            [
+              679.0,
+              939.0
+            ],
+            [
+              662.0,
+              919.0
+            ],
+            [
+              658.0,
+              921.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_5",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-105",
+        "Area_sq_m": 201.2,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              390.0,
+              812.0
+            ],
+            [
+              392.0,
+              815.0
+            ],
+            [
+              399.0,
+              811.0
+            ],
+            [
+              403.0,
+              813.0
+            ],
+            [
+              404.0,
+              806.0
+            ],
+            [
+              409.0,
+              804.0
+            ],
+            [
+              411.0,
+              815.0
+            ],
+            [
+              430.0,
+              823.0
+            ],
+            [
+              444.0,
+              837.0
+            ],
+            [
+              455.0,
+              842.0
+            ],
+            [
+              454.0,
+              845.0
+            ],
+            [
+              459.0,
+              845.0
+            ],
+            [
+              459.0,
+              852.0
+            ],
+            [
+              462.0,
+              852.0
+            ],
+            [
+              461.0,
+              845.0
+            ],
+            [
+              469.0,
+              847.0
+            ],
+            [
+              464.0,
+              853.0
+            ],
+            [
+              478.0,
+              856.0
+            ],
+            [
+              475.0,
+              858.0
+            ],
+            [
+              478.0,
+              880.0
+            ],
+            [
+              483.0,
+              881.0
+            ],
+            [
+              496.0,
+              867.0
+            ],
+            [
+              491.0,
+              850.0
+            ],
+            [
+              494.0,
+              832.0
+            ],
+            [
+              489.0,
+              834.0
+            ],
+            [
+              484.0,
+              845.0
+            ],
+            [
+              461.0,
+              838.0
+            ],
+            [
+              444.0,
+              828.0
+            ],
+            [
+              436.0,
+              820.0
+            ],
+            [
+              436.0,
+              815.0
+            ],
+            [
+              433.0,
+              817.0
+            ],
+            [
+              428.0,
+              811.0
+            ],
+            [
+              423.0,
+              813.0
+            ],
+            [
+              421.0,
+              809.0
+            ],
+            [
+              425.0,
+              806.0
+            ],
+            [
+              417.0,
+              809.0
+            ],
+            [
+              413.0,
+              806.0
+            ],
+            [
+              413.0,
+              802.0
+            ],
+            [
+              420.0,
+              803.0
+            ],
+            [
+              414.0,
+              799.0
+            ],
+            [
+              399.0,
+              810.0
+            ],
+            [
+              390.0,
+              812.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_6",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-106",
+        "Area_sq_m": 366.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              160.0,
+              733.0
+            ],
+            [
+              153.0,
+              736.0
+            ],
+            [
+              157.0,
+              756.0
+            ],
+            [
+              140.0,
+              757.0
+            ],
+            [
+              109.0,
+              815.0
+            ],
+            [
+              68.0,
+              839.0
+            ],
+            [
+              67.0,
+              832.0
+            ],
+            [
+              64.0,
+              847.0
+            ],
+            [
+              56.0,
+              852.0
+            ],
+            [
+              56.0,
+              858.0
+            ],
+            [
+              73.0,
+              871.0
+            ],
+            [
+              110.0,
+              882.0
+            ],
+            [
+              124.0,
+              893.0
+            ],
+            [
+              112.0,
+              902.0
+            ],
+            [
+              109.0,
+              914.0
+            ],
+            [
+              128.0,
+              900.0
+            ],
+            [
+              143.0,
+              897.0
+            ],
+            [
+              145.0,
+              890.0
+            ],
+            [
+              131.0,
+              889.0
+            ],
+            [
+              111.0,
+              875.0
+            ],
+            [
+              77.0,
+              864.0
+            ],
+            [
+              71.0,
+              847.0
+            ],
+            [
+              93.0,
+              830.0
+            ],
+            [
+              98.0,
+              831.0
+            ],
+            [
+              92.0,
+              837.0
+            ],
+            [
+              114.0,
+              830.0
+            ],
+            [
+              107.0,
+              828.0
+            ],
+            [
+              116.0,
+              823.0
+            ],
+            [
+              121.0,
+              800.0
+            ],
+            [
+              147.0,
+              760.0
+            ],
+            [
+              177.0,
+              777.0
+            ],
+            [
+              159.0,
+              744.0
+            ],
+            [
+              160.0,
+              733.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_7",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-107",
+        "Area_sq_m": 666.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              164.0,
+              712.0
+            ],
+            [
+              192.0,
+              685.0
+            ],
+            [
+              253.0,
+              730.0
+            ],
+            [
+              260.0,
+              751.0
+            ],
+            [
+              223.0,
+              770.0
+            ],
+            [
+              222.0,
+              813.0
+            ],
+            [
+              284.0,
+              831.0
+            ],
+            [
+              314.0,
+              815.0
+            ],
+            [
+              309.0,
+              810.0
+            ],
+            [
+              327.0,
+              798.0
+            ],
+            [
+              333.0,
+              774.0
+            ],
+            [
+              396.0,
+              807.0
+            ],
+            [
+              378.0,
+              795.0
+            ],
+            [
+              380.0,
+              787.0
+            ],
+            [
+              366.0,
+              777.0
+            ],
+            [
+              363.0,
+              783.0
+            ],
+            [
+              362.0,
+              768.0
+            ],
+            [
+              359.0,
+              777.0
+            ],
+            [
+              353.0,
+              766.0
+            ],
+            [
+              344.0,
+              772.0
+            ],
+            [
+              324.0,
+              753.0
+            ],
+            [
+              287.0,
+              815.0
+            ],
+            [
+              297.0,
+              815.0
+            ],
+            [
+              281.0,
+              825.0
+            ],
+            [
+              231.0,
+              806.0
+            ],
+            [
+              226.0,
+              783.0
+            ],
+            [
+              271.0,
+              747.0
+            ],
+            [
+              266.0,
+              763.0
+            ],
+            [
+              274.0,
+              757.0
+            ],
+            [
+              265.0,
+              720.0
+            ],
+            [
+              242.0,
+              697.0
+            ],
+            [
+              256.0,
+              717.0
+            ],
+            [
+              191.0,
+              678.0
+            ],
+            [
+              164.0,
+              712.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_8",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-108",
+        "Area_sq_m": 143.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1045.0,
+              325.0
+            ],
+            [
+              1042.0,
+              328.0
+            ],
+            [
+              1048.0,
+              331.0
+            ],
+            [
+              1045.0,
+              334.0
+            ],
+            [
+              1039.0,
+              334.0
+            ],
+            [
+              1042.0,
+              337.0
+            ],
+            [
+              1040.0,
+              344.0
+            ],
+            [
+              1041.0,
+              346.0
+            ],
+            [
+              1042.0,
+              339.0
+            ],
+            [
+              1046.0,
+              341.0
+            ],
+            [
+              1046.0,
+              347.0
+            ],
+            [
+              1043.0,
+              351.0
+            ],
+            [
+              1046.0,
+              355.0
+            ],
+            [
+              1047.0,
+              348.0
+            ],
+            [
+              1051.0,
+              350.0
+            ],
+            [
+              1052.0,
+              357.0
+            ],
+            [
+              1049.0,
+              359.0
+            ],
+            [
+              1056.0,
+              366.0
+            ],
+            [
+              1052.0,
+              363.0
+            ],
+            [
+              1054.0,
+              355.0
+            ],
+            [
+              1058.0,
+              365.0
+            ],
+            [
+              1062.0,
+              360.0
+            ],
+            [
+              1067.0,
+              363.0
+            ],
+            [
+              1068.0,
+              372.0
+            ],
+            [
+              1073.0,
+              378.0
+            ],
+            [
+              1071.0,
+              385.0
+            ],
+            [
+              1074.0,
+              387.0
+            ],
+            [
+              1069.0,
+              398.0
+            ],
+            [
+              1074.0,
+              400.0
+            ],
+            [
+              1077.0,
+              405.0
+            ],
+            [
+              1079.0,
+              398.0
+            ],
+            [
+              1084.0,
+              393.0
+            ],
+            [
+              1079.0,
+              371.0
+            ],
+            [
+              1062.0,
+              340.0
+            ],
+            [
+              1055.0,
+              332.0
+            ],
+            [
+              1048.0,
+              330.0
+            ],
+            [
+              1050.0,
+              327.0
+            ],
+            [
+              1058.0,
+              328.0
+            ],
+            [
+              1054.0,
+              325.0
+            ],
+            [
+              1050.0,
+              327.0
+            ],
+            [
+              1045.0,
+              325.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_9",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-109",
+        "Area_sq_m": 194.1,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              885.0,
+              328.0
+            ],
+            [
+              872.0,
+              308.0
+            ],
+            [
+              858.0,
+              298.0
+            ],
+            [
+              874.0,
+              318.0
+            ],
+            [
+              868.0,
+              329.0
+            ],
+            [
+              874.0,
+              327.0
+            ],
+            [
+              878.0,
+              330.0
+            ],
+            [
+              869.0,
+              344.0
+            ],
+            [
+              767.0,
+              353.0
+            ],
+            [
+              756.0,
+              345.0
+            ],
+            [
+              747.0,
+              332.0
+            ],
+            [
+              743.0,
+              332.0
+            ],
+            [
+              742.0,
+              337.0
+            ],
+            [
+              748.0,
+              346.0
+            ],
+            [
+              745.0,
+              352.0
+            ],
+            [
+              747.0,
+              356.0
+            ],
+            [
+              749.0,
+              351.0
+            ],
+            [
+              762.0,
+              360.0
+            ],
+            [
+              771.0,
+              360.0
+            ],
+            [
+              785.0,
+              355.0
+            ],
+            [
+              814.0,
+              356.0
+            ],
+            [
+              868.0,
+              351.0
+            ],
+            [
+              879.0,
+              344.0
+            ],
+            [
+              885.0,
+              328.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_10",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-110",
+        "Area_sq_m": 41.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              407.0,
+              242.0
+            ],
+            [
+              403.0,
+              243.0
+            ],
+            [
+              402.0,
+              241.0
+            ],
+            [
+              400.0,
+              241.0
+            ],
+            [
+              400.0,
+              242.0
+            ],
+            [
+              398.0,
+              244.0
+            ],
+            [
+              397.0,
+              244.0
+            ],
+            [
+              394.0,
+              253.0
+            ],
+            [
+              388.0,
+              260.0
+            ],
+            [
+              387.0,
+              263.0
+            ],
+            [
+              385.0,
+              265.0
+            ],
+            [
+              381.0,
+              273.0
+            ],
+            [
+              381.0,
+              276.0
+            ],
+            [
+              382.0,
+              278.0
+            ],
+            [
+              386.0,
+              278.0
+            ],
+            [
+              387.0,
+              277.0
+            ],
+            [
+              388.0,
+              273.0
+            ],
+            [
+              391.0,
+              269.0
+            ],
+            [
+              391.0,
+              267.0
+            ],
+            [
+              395.0,
+              263.0
+            ],
+            [
+              399.0,
+              256.0
+            ],
+            [
+              403.0,
+              252.0
+            ],
+            [
+              403.0,
+              249.0
+            ],
+            [
+              405.0,
+              247.0
+            ],
+            [
+              407.0,
+              242.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_11",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-111",
+        "Area_sq_m": 52.7,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              424.0,
+              223.0
+            ],
+            [
+              424.0,
+              229.0
+            ],
+            [
+              426.0,
+              229.0
+            ],
+            [
+              429.0,
+              227.0
+            ],
+            [
+              444.0,
+              226.0
+            ],
+            [
+              447.0,
+              228.0
+            ],
+            [
+              447.0,
+              230.0
+            ],
+            [
+              446.0,
+              231.0
+            ],
+            [
+              445.0,
+              230.0
+            ],
+            [
+              447.0,
+              233.0
+            ],
+            [
+              443.0,
+              235.0
+            ],
+            [
+              444.0,
+              236.0
+            ],
+            [
+              451.0,
+              237.0
+            ],
+            [
+              453.0,
+              239.0
+            ],
+            [
+              455.0,
+              236.0
+            ],
+            [
+              457.0,
+              237.0
+            ],
+            [
+              458.0,
+              235.0
+            ],
+            [
+              457.0,
+              233.0
+            ],
+            [
+              457.0,
+              227.0
+            ],
+            [
+              450.0,
+              220.0
+            ],
+            [
+              446.0,
+              219.0
+            ],
+            [
+              442.0,
+              215.0
+            ],
+            [
+              443.0,
+              213.0
+            ],
+            [
+              447.0,
+              213.0
+            ],
+            [
+              448.0,
+              215.0
+            ],
+            [
+              451.0,
+              214.0
+            ],
+            [
+              449.0,
+              212.0
+            ],
+            [
+              439.0,
+              213.0
+            ],
+            [
+              443.0,
+              216.0
+            ],
+            [
+              440.0,
+              219.0
+            ],
+            [
+              429.0,
+              219.0
+            ],
+            [
+              426.0,
+              220.0
+            ],
+            [
+              424.0,
+              223.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_12",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-112",
+        "Area_sq_m": 145.5,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              410.0,
+              116.0
+            ],
+            [
+              407.0,
+              114.0
+            ],
+            [
+              396.0,
+              116.0
+            ],
+            [
+              373.0,
+              132.0
+            ],
+            [
+              356.0,
+              140.0
+            ],
+            [
+              352.0,
+              147.0
+            ],
+            [
+              343.0,
+              149.0
+            ],
+            [
+              321.0,
+              148.0
+            ],
+            [
+              319.0,
+              145.0
+            ],
+            [
+              325.0,
+              143.0
+            ],
+            [
+              315.0,
+              142.0
+            ],
+            [
+              312.0,
+              133.0
+            ],
+            [
+              305.0,
+              129.0
+            ],
+            [
+              299.0,
+              135.0
+            ],
+            [
+              307.0,
+              140.0
+            ],
+            [
+              310.0,
+              150.0
+            ],
+            [
+              315.0,
+              153.0
+            ],
+            [
+              314.0,
+              157.0
+            ],
+            [
+              310.0,
+              157.0
+            ],
+            [
+              310.0,
+              159.0
+            ],
+            [
+              314.0,
+              160.0
+            ],
+            [
+              317.0,
+              154.0
+            ],
+            [
+              326.0,
+              157.0
+            ],
+            [
+              350.0,
+              156.0
+            ],
+            [
+              358.0,
+              152.0
+            ],
+            [
+              366.0,
+              143.0
+            ],
+            [
+              390.0,
+              131.0
+            ],
+            [
+              391.0,
+              128.0
+            ],
+            [
+              396.0,
+              131.0
+            ],
+            [
+              394.0,
+              127.0
+            ],
+            [
+              410.0,
+              116.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_13",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-113",
+        "Area_sq_m": 182.8,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              425.0,
+              106.0
+            ],
+            [
+              423.0,
+              113.0
+            ],
+            [
+              434.0,
+              112.0
+            ],
+            [
+              438.0,
+              118.0
+            ],
+            [
+              455.0,
+              126.0
+            ],
+            [
+              456.0,
+              143.0
+            ],
+            [
+              453.0,
+              148.0
+            ],
+            [
+              450.0,
+              147.0
+            ],
+            [
+              451.0,
+              136.0
+            ],
+            [
+              448.0,
+              125.0
+            ],
+            [
+              449.0,
+              152.0
+            ],
+            [
+              453.0,
+              160.0
+            ],
+            [
+              451.0,
+              154.0
+            ],
+            [
+              455.0,
+              153.0
+            ],
+            [
+              458.0,
+              162.0
+            ],
+            [
+              454.0,
+              162.0
+            ],
+            [
+              460.0,
+              168.0
+            ],
+            [
+              460.0,
+              175.0
+            ],
+            [
+              468.0,
+              179.0
+            ],
+            [
+              468.0,
+              206.0
+            ],
+            [
+              477.0,
+              213.0
+            ],
+            [
+              485.0,
+              212.0
+            ],
+            [
+              487.0,
+              208.0
+            ],
+            [
+              484.0,
+              203.0
+            ],
+            [
+              469.0,
+              202.0
+            ],
+            [
+              471.0,
+              169.0
+            ],
+            [
+              465.0,
+              154.0
+            ],
+            [
+              464.0,
+              137.0
+            ],
+            [
+              460.0,
+              132.0
+            ],
+            [
+              460.0,
+              118.0
+            ],
+            [
+              453.0,
+              112.0
+            ],
+            [
+              454.0,
+              108.0
+            ],
+            [
+              459.0,
+              109.0
+            ],
+            [
+              458.0,
+              106.0
+            ],
+            [
+              452.0,
+              105.0
+            ],
+            [
+              451.0,
+              101.0
+            ],
+            [
+              425.0,
+              106.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_14",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-114",
+        "Area_sq_m": 33.4,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              289.0,
+              88.0
+            ],
+            [
+              288.0,
+              90.0
+            ],
+            [
+              288.0,
+              113.0
+            ],
+            [
+              290.0,
+              116.0
+            ],
+            [
+              290.0,
+              119.0
+            ],
+            [
+              292.0,
+              123.0
+            ],
+            [
+              294.0,
+              125.0
+            ],
+            [
+              294.0,
+              127.0
+            ],
+            [
+              297.0,
+              130.0
+            ],
+            [
+              298.0,
+              130.0
+            ],
+            [
+              301.0,
+              127.0
+            ],
+            [
+              301.0,
+              126.0
+            ],
+            [
+              298.0,
+              123.0
+            ],
+            [
+              295.0,
+              117.0
+            ],
+            [
+              294.0,
+              112.0
+            ],
+            [
+              293.0,
+              111.0
+            ],
+            [
+              293.0,
+              92.0
+            ],
+            [
+              294.0,
+              91.0
+            ],
+            [
+              294.0,
+              88.0
+            ],
+            [
+              289.0,
+              88.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_15",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-115",
+        "Area_sq_m": 771.3,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              1076.0,
+              64.0
+            ],
+            [
+              1058.0,
+              87.0
+            ],
+            [
+              1070.0,
+              81.0
+            ],
+            [
+              1043.0,
+              104.0
+            ],
+            [
+              1046.0,
+              91.0
+            ],
+            [
+              976.0,
+              112.0
+            ],
+            [
+              977.0,
+              163.0
+            ],
+            [
+              993.0,
+              201.0
+            ],
+            [
+              984.0,
+              167.0
+            ],
+            [
+              998.0,
+              188.0
+            ],
+            [
+              1002.0,
+              219.0
+            ],
+            [
+              975.0,
+              247.0
+            ],
+            [
+              951.0,
+              251.0
+            ],
+            [
+              959.0,
+              243.0
+            ],
+            [
+              945.0,
+              248.0
+            ],
+            [
+              900.0,
+              218.0
+            ],
+            [
+              916.0,
+              164.0
+            ],
+            [
+              908.0,
+              156.0
+            ],
+            [
+              908.0,
+              170.0
+            ],
+            [
+              898.0,
+              154.0
+            ],
+            [
+              903.0,
+              183.0
+            ],
+            [
+              896.0,
+              180.0
+            ],
+            [
+              892.0,
+              218.0
+            ],
+            [
+              943.0,
+              258.0
+            ],
+            [
+              930.0,
+              257.0
+            ],
+            [
+              963.0,
+              264.0
+            ],
+            [
+              943.0,
+              260.0
+            ],
+            [
+              979.0,
+              255.0
+            ],
+            [
+              1007.0,
+              224.0
+            ],
+            [
+              1008.0,
+              202.0
+            ],
+            [
+              1017.0,
+              214.0
+            ],
+            [
+              993.0,
+              120.0
+            ],
+            [
+              1040.0,
+              121.0
+            ],
+            [
+              1029.0,
+              117.0
+            ],
+            [
+              1077.0,
+              90.0
+            ],
+            [
+              1076.0,
+              64.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "road_huzur_mapped_03_16",
+      "properties": {
+        "type": "road",
+        "source": "AI Mapping",
+        "survey_number": "RD-HZR-03-116",
+        "Area_sq_m": 1394.9,
+        "LADM_Standard": "ISO 19152:2012",
+        "LADM_Class": "LA_SpatialUnit_Road"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              902.0,
+              65.0
+            ],
+            [
+              718.0,
+              167.0
+            ],
+            [
+              645.0,
+              170.0
+            ],
+            [
+              440.0,
+              286.0
+            ],
+            [
+              436.0,
+              250.0
+            ],
+            [
+              414.0,
+              300.0
+            ],
+            [
+              326.0,
+              294.0
+            ],
+            [
+              371.0,
+              295.0
+            ],
+            [
+              316.0,
+              300.0
+            ],
+            [
+              282.0,
+              340.0
+            ],
+            [
+              177.0,
+              391.0
+            ],
+            [
+              288.0,
+              353.0
+            ],
+            [
+              333.0,
+              308.0
+            ],
+            [
+              382.0,
+              300.0
+            ],
+            [
+              441.0,
+              332.0
+            ],
+            [
+              426.0,
+              307.0
+            ],
+            [
+              649.0,
+              185.0
+            ],
+            [
+              873.0,
+              105.0
+            ],
+            [
+              902.0,
+              65.0
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

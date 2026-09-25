@@ -40,3 +40,75 @@ body {
 .maplibregl-ctrl-attrib {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════ */
+/* ANIMATED GEOSPATIAL WAVES (Landing Page) */
+/* ═══════════════════════════════════════════ */
+
+/* Hero Waves */
+@keyframes heroWaveBreath1 {
+  0% { transform: translateY(-12px) scaleY(1.02); }
+  100% { transform: translateY(12px) scaleY(0.98); }
+}
+@keyframes heroWaveBreath2 {
+  0% { transform: translateY(12px) scaleY(0.98); }
+  100% { transform: translateY(-12px) scaleY(1.02); }
+}
+@keyframes heroBeamFlow {
+  0% { stroke-dashoffset: 2500; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.hero-wave-path-1 {
+  animation: heroWaveBreath1 7s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: center;
+}
+.hero-wave-path-2 {
+  animation: heroWaveBreath2 9s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: center;
+}
+.hero-beam-stroke {
+  animation: heroBeamFlow 5s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+/* Feature Background Waves */
+@keyframes waveBreath1 {
+  0% { transform: translateY(-10px) scaleY(1.02); }
+  100% { transform: translateY(10px) scaleY(0.98); }
+}
+@keyframes waveBreath2 {
+  0% { transform: translateY(10px) scaleY(0.98); }
+  100% { transform: translateY(-10px) scaleY(1.02); }
+}
+@keyframes beamFlow {
+  0% { stroke-dashoffset: 2000; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.wave-path-1 {
+  animation: waveBreath1 8s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: center;
+}
+.wave-path-2 {
+  animation: waveBreath2 10s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: center;
+}
+.beam-stroke {
+  animation: beamFlow 5s linear infinite;
+  will-change: stroke-dashoffset;
+}
+
+/* Shared Pulse Node */
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+.pulse-node {
+  animation: pulseDot 3s ease-in-out infinite;
+  transform-origin: center;
+}

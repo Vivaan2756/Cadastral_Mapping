@@ -62,7 +62,20 @@ export function getTileImageUrl(tileId: string): string {
 export async function fetchTileGeoJSON(tileId: string): Promise<GeoJSONFeatureCollection> {
   const cleanTileId = matchUploadedFileToTile(tileId);
 
-  // 1. Try Next.js API route first (directly reads data/Huzur_Bhopal_Cadastre_20Pairs/geojson/)
+  // 1. Prioritize fetching the enriched standalone GeoJSON from the public data folder
+  try {
+    const res = await fetch(`/data/${cleanTileId}.geojson`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.features && data.features.length > 0) {
+        return data;
+      }
+    }
+  } catch (e) {
+    console.warn("Could not fetch enriched geojson, falling back...", e);
+  }
+
+  // 2. Try Next.js API route (reads raw non-enriched from data/Huzur...)
   try {
     const res = await fetch(`/api/tiles/${cleanTileId}/geojson`, {
       signal: AbortSignal.timeout(2000),

@@ -35,8 +35,8 @@ export default function LandingPage() {
           </nav>
 
           {/* CTA */}
-          <Link href="/console" className="bg-[#10b981] hover:bg-emerald-600 text-white font-bold text-[13px] px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-500/20">
-            Request Demo
+          <Link href="/dashboard" className="bg-[#10b981] hover:bg-emerald-600 text-white font-bold text-[13px] px-5 py-2.5 rounded-xl transition-all shadow-md shadow-emerald-500/20">
+            Enter Dashboard
           </Link>
         </div>
       </header>
@@ -71,8 +71,8 @@ export default function LandingPage() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/console" className="w-full sm:w-auto bg-[#10b981] hover:bg-emerald-600 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/25">
-              Start Your Project
+            <Link href="/dashboard" className="w-full sm:w-auto bg-[#10b981] hover:bg-emerald-600 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-500/25">
+              Enter Resurvey Operations Portal
             </Link>
             <a href="#features" className="w-full sm:w-auto bg-[#38bdf8] hover:bg-sky-500 text-white font-bold text-sm px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-sky-500/25">
               Learn More
@@ -227,7 +227,7 @@ export default function LandingPage() {
           <div>
             <h4 className="font-bold text-slate-800 text-sm mb-4">Launch</h4>
             <ul className="space-y-3 mb-6">
-              <li><Link href="/console" className="text-xs text-emerald-600 hover:text-emerald-700 font-bold transition-colors flex items-center gap-1">Open Interactive Console <ArrowRight className="w-3 h-3" /></Link></li>
+              <li><Link href="/dashboard" className="text-xs text-emerald-600 hover:text-emerald-700 font-bold transition-colors flex items-center gap-1">Enter Operations Dashboard <ArrowRight className="w-3 h-3" /></Link></li>
               <li><a href="#" className="text-xs text-slate-500 hover:text-teal-600 font-medium transition-colors">Schedule a Demo</a></li>
             </ul>
             <div className="text-[10px] text-slate-400 font-medium">

@@ -161,7 +161,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
 
   // Render SVG features and calculate encroachment overlaps
   const { features: svgFeatures, bbox, isPixel, overlappingFeatureIds, overlapSvgFeatures } = useMemo(() => {
-    
+
     // Algorithmic Smoothing & Regularization
     const layerOrder: Record<string, number> = {
       parcel: 1,
@@ -177,7 +177,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
           const smoothed = turf.polygonSmooth(turf.feature(f.geometry), { iterations: 3 });
           return { ...f, geometry: smoothed.features[0].geometry } as GeoJSONFeature;
         } catch (e) {
-          return f; 
+          return f;
         }
       }
       if (f.properties?.type === 'building' && f.geometry) {
@@ -201,52 +201,52 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
 
     const processedGeojson = { ...geojson, features: processedFeatures };
     const res = geoJsonToSvg(processedGeojson, viewWidth, viewHeight, initialBbox || undefined);
-    
+
     // Calculate Encroachment Overlaps
     const overlappingFeatureIds = new Set<string>();
     const intersectionFeatures: any[] = [];
-    
-    const polys = processedGeojson.features.filter(f => 
+
+    const polys = processedGeojson.features.filter(f =>
       f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'
     );
-    
+
     // O(N^2) audit for overlaps between structures
     for (let i = 0; i < polys.length; i++) {
       for (let j = i + 1; j < polys.length; j++) {
         const f1 = polys[i];
         const f2 = polys[j];
-        
+
         const type1 = f1.properties?.type || 'unknown';
         const type2 = f2.properties?.type || 'unknown';
-        
+
         // Exclude Building vs Parcel overlap, since buildings natively sit inside parcels.
         // We want to catch Building vs Building, Parcel vs Parcel, Road vs Road, Road vs Building, etc.
-        const isBuildingInsideParcel = 
-          (type1 === 'parcel' && type2 === 'building') || 
+        const isBuildingInsideParcel =
+          (type1 === 'parcel' && type2 === 'building') ||
           (type1 === 'building' && type2 === 'parcel');
-          
+
         if (!isBuildingInsideParcel) {
-           try {
-              // @ts-ignore
-              const intersection = turf.intersect(turf.feature(f1.geometry), turf.feature(f2.geometry));
-              if (intersection) {
-                 // Calculate overlap area (mocked metric if pixel space)
-                 overlappingFeatureIds.add(f1.id as string);
-                 overlappingFeatureIds.add(f2.id as string);
-                 intersectionFeatures.push({
-                   type: "Feature",
-                   id: `overlap-${f1.id}-${f2.id}`,
-                   properties: { type: "encroachment" },
-                   geometry: intersection.geometry
-                 });
-              }
-           } catch (e) {
-              // Ignore degenerate geometries from manual drawing
-           }
+          try {
+            // @ts-ignore
+            const intersection = turf.intersect(turf.feature(f1.geometry), turf.feature(f2.geometry));
+            if (intersection) {
+              // Calculate overlap area (mocked metric if pixel space)
+              overlappingFeatureIds.add(f1.id as string);
+              overlappingFeatureIds.add(f2.id as string);
+              intersectionFeatures.push({
+                type: "Feature",
+                id: `overlap-${f1.id}-${f2.id}`,
+                properties: { type: "encroachment" },
+                geometry: intersection.geometry
+              });
+            }
+          } catch (e) {
+            // Ignore degenerate geometries from manual drawing
+          }
         }
       }
     }
-    
+
     let overlapSvgFeatures: any[] = [];
     if (intersectionFeatures.length > 0) {
       const overlapFc = { type: "FeatureCollection", features: intersectionFeatures } as any;
@@ -393,47 +393,47 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
     >
       {/* Left Side: Input Drone / Satellite Image */}
       <div className="w-full h-full max-h-full flex flex-col bg-white rounded-2xl border border-slate-200 p-2 shadow-sm overflow-hidden">
-          <div className="w-full flex items-center justify-between pb-2 shrink-0">
-            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-700 truncate">
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>[RAW ORTHOMOSAIC (ORI)] 5cm GSD</span>
-            </div>
-            <div className="flex items-center gap-1 shrink-0 bg-slate-50 rounded-lg border border-slate-200 p-0.5">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setLeftViewMode("RGB"); }}
-                className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'RGB' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-              >
-                RGB Optical
-              </button>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setLeftViewMode("DSM"); }}
-                className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'DSM' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-              >
-                DSM Surface
-              </button>
-            </div>
+        <div className="w-full flex items-center justify-between pb-2 shrink-0">
+          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-700 truncate">
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>[RAW ORTHOMOSAIC (ORI)] 5cm GSD</span>
           </div>
-
-          <div
-            className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center group"
-            style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
-            onWheel={handleWheel}
-            onMouseDown={handleMapMouseDown}
-            onMouseMove={handleMapMouseMove}
-            onMouseUp={handleMapMouseUp}
-            onMouseLeave={handleMapMouseUp}
-          >
-            <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={inputImageUrl || imageUrl || "/hero-cadastral.jpg"}
-                alt="Input Aerial Capture"
-                className="w-full h-full object-contain pointer-events-none transition-all duration-300"
-                style={leftViewMode === "DSM" ? { filter: 'contrast(180%) invert(20%) hue-rotate(190deg) brightness(90%)' } : {}}
-              />
-            </div>
+          <div className="flex items-center gap-1 shrink-0 bg-slate-50 rounded-lg border border-slate-200 p-0.5">
+            <button
+              onClick={(e) => { e.stopPropagation(); setLeftViewMode("RGB"); }}
+              className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'RGB' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              RGB Optical
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setLeftViewMode("DSM"); }}
+              className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'DSM' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              DSM Surface
+            </button>
           </div>
         </div>
+
+        <div
+          className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center group"
+          style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
+          onWheel={handleWheel}
+          onMouseDown={handleMapMouseDown}
+          onMouseMove={handleMapMouseMove}
+          onMouseUp={handleMapMouseUp}
+          onMouseLeave={handleMapMouseUp}
+        >
+          <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={inputImageUrl || imageUrl || "/hero-cadastral.jpg"}
+              alt="Input Aerial Capture"
+              className="w-full h-full object-contain pointer-events-none transition-all duration-300"
+              style={leftViewMode === "DSM" ? { filter: 'contrast(180%) invert(20%) hue-rotate(190deg) brightness(90%)' } : {}}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Right Side: Mapped Image + Interactive SVG Vector Overlay Workspace */}
       <div className="w-full h-full max-h-full flex flex-col bg-slate-950 rounded-2xl border-2 border-slate-700/80 p-2 shadow-xl overflow-hidden">
@@ -486,13 +486,12 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
             <svg
               ref={svgRef}
               viewBox={`0 0 ${viewWidth} ${viewHeight}`}
-              className={`absolute inset-0 w-full h-full z-10 ${
-                mode === "add_polygon" || mode === "add_line"
+              className={`absolute inset-0 w-full h-full z-10 ${mode === "add_polygon" || mode === "add_line"
                   ? "cursor-crosshair"
                   : mode === "edit"
-                  ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
-                  : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
-              }`}
+                    ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
+                    : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
+                }`}
               onClick={handleSvgClick}
               onDoubleClick={handleSvgDoubleClick}
               onMouseMove={handleMouseMove}
@@ -513,7 +512,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                 const isSelected = feat.id === selectedFeatureId;
                 const isHovered = feat.id === hoveredFeatureId;
                 const isEncroaching = overlappingFeatureIds.has(feat.id);
-                
+
                 // Do NOT override the whole style for encroaching base features. Encroachment patches are rendered separately.
                 const style = FEATURE_COLORS[feat.type] || FEATURE_COLORS.default;
 
@@ -645,7 +644,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                   });
                   const cx = (minX + maxX) / 2;
                   const cy = (minY + maxY) / 2;
-                  
+
                   return (
                     <g transform={`translate(${cx}, ${cy})`} className="pointer-events-none">
                       <circle cx="0" cy="0" r="4" fill="#facc15" className="animate-ping opacity-75" />
@@ -663,21 +662,21 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
               {showGCP && (
                 <>
                   <g transform={`translate(${viewWidth * 0.8}, ${viewHeight * 0.15})`} className="pointer-events-none">
-                     <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" strokeWidth="1" className="animate-ping" />
-                     <circle cx="0" cy="0" r="4" fill="white" stroke="#ef4444" strokeWidth="1.5" />
-                     <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="#ef4444" strokeWidth="1" />
-                     <rect x="8" y="-14" width="165" height="14" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(185, 28, 28, 0.8)" strokeWidth="1" />
-                     <text x="14" y="-4" fontSize="7" fill="#fca5a5" fontFamily="monospace" fontWeight="bold">
-                       ▲ CORS-MP-BHP-04 [Datum: 501.57m AMSL]
-                     </text>
+                    <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" strokeWidth="1" className="animate-ping" />
+                    <circle cx="0" cy="0" r="4" fill="white" stroke="#ef4444" strokeWidth="1.5" />
+                    <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="#ef4444" strokeWidth="1" />
+                    <rect x="8" y="-14" width="165" height="14" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(185, 28, 28, 0.8)" strokeWidth="1" />
+                    <text x="14" y="-4" fontSize="7" fill="#fca5a5" fontFamily="monospace" fontWeight="bold">
+                      ▲ CORS-MP-BHP-04 [Datum: 501.57m AMSL]
+                    </text>
                   </g>
                   <g transform={`translate(${viewWidth * 0.18}, ${viewHeight * 0.85})`} className="pointer-events-none">
-                     <polygon points="0,-6 5.2,3 -5.2,3" fill="none" stroke="#06b6d4" strokeWidth="1.5" />
-                     <circle cx="0" cy="0" r="1.5" fill="#06b6d4" />
-                     <rect x="8" y="-10" width="110" height="12" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(14, 116, 144, 0.8)" strokeWidth="1" />
-                     <text x="14" y="-1.5" fontSize="7" fill="#67e8f9" fontFamily="monospace" fontWeight="bold">
-                       ▲ GCP-HZR-02 [Base Anchor]
-                     </text>
+                    <polygon points="0,-6 5.2,3 -5.2,3" fill="none" stroke="#06b6d4" strokeWidth="1.5" />
+                    <circle cx="0" cy="0" r="1.5" fill="#06b6d4" />
+                    <rect x="8" y="-10" width="110" height="12" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(14, 116, 144, 0.8)" strokeWidth="1" />
+                    <text x="14" y="-1.5" fontSize="7" fill="#67e8f9" fontFamily="monospace" fontWeight="bold">
+                      ▲ GCP-HZR-02 [Base Anchor]
+                    </text>
                   </g>
                 </>
               )}
@@ -737,7 +736,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                 <line x1={viewWidth} y1={0} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
                 <line x1={0} y1={0} x2={viewWidth} y2={0} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
                 <line x1={0} y1={viewHeight} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
-                
+
                 <rect x={10 * (viewWidth / 512)} y={10 * (viewWidth / 512)} width={200 * (viewWidth / 512)} height={20 * (viewWidth / 512)} fill="white" fillOpacity="0.85" rx={4 * (viewWidth / 512)} />
                 <text x={16 * (viewWidth / 512)} y={24 * (viewWidth / 512)} fontSize={11 * (viewWidth / 512)} fill="#475569" fontWeight="bold" fontFamily="sans-serif">
                   Survey Tile Boundary (Neatline)
@@ -745,42 +744,42 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
               </g>
             </svg>
           </div>
-            <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-[10px] font-bold text-emerald-700 z-20 shadow-sm flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Validated
+          <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-[10px] font-bold text-emerald-700 z-20 shadow-sm flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3" /> Validated
+          </div>
+
+          {/* Visual Diagnostics Panel (Section 20) */}
+          {showDiagnostics && (
+            <div className="absolute top-12 left-3 z-30 p-3.5 rounded-lg bg-white border border-emerald-300 text-[11px] font-mono text-slate-700 shadow-lg space-y-1.5 max-w-[260px]">
+              <div className="text-emerald-800 font-bold border-b border-slate-200 pb-1.5 flex justify-between">
+                <span>SPATIAL REGISTRATION</span>
+                <button onClick={() => setShowDiagnostics(false)} className="text-slate-400 hover:text-slate-700">✕</button>
+              </div>
+              <div><span className="text-slate-500 font-bold">TILE:</span> <span>{geojson.tile_id || "N/A"}</span></div>
+              <div><span className="text-slate-500 font-bold">RASTER:</span> <span>{rasterDims.width} × {rasterDims.height}</span></div>
+              <div><span className="text-slate-500 font-bold">CRS:</span> <span className="text-emerald-700">{geojson.crs?.properties?.name || (isPixel ? "Pixel_Space" : "EPSG:32643")}</span></div>
+              <div className="pt-1.5 border-t border-slate-200 text-[10px] text-slate-600">
+                <div>minX: {bbox.minX.toFixed(2)}</div>
+                <div>maxX: {bbox.maxX.toFixed(2)}</div>
+                <div>minY: {bbox.minY.toFixed(2)}</div>
+                <div>maxY: {bbox.maxY.toFixed(2)}</div>
+              </div>
+              <div className="pt-1.5 border-t border-slate-200">
+                <div><span className="text-slate-500 font-bold">FEATURES:</span> <span>{geojson.features.length}</span></div>
+                <div><span className="text-slate-500 font-bold">SVG VIEWBOX:</span> <span>{viewWidth} × {viewHeight}</span></div>
+              </div>
             </div>
+          )}
 
-            {/* Visual Diagnostics Panel (Section 20) */}
-            {showDiagnostics && (
-              <div className="absolute top-12 left-3 z-30 p-3.5 rounded-lg bg-white border border-emerald-300 text-[11px] font-mono text-slate-700 shadow-lg space-y-1.5 max-w-[260px]">
-                <div className="text-emerald-800 font-bold border-b border-slate-200 pb-1.5 flex justify-between">
-                  <span>SPATIAL REGISTRATION</span>
-                  <button onClick={() => setShowDiagnostics(false)} className="text-slate-400 hover:text-slate-700">✕</button>
-                </div>
-                <div><span className="text-slate-500 font-bold">TILE:</span> <span>{geojson.tile_id || "N/A"}</span></div>
-                <div><span className="text-slate-500 font-bold">RASTER:</span> <span>{rasterDims.width} × {rasterDims.height}</span></div>
-                <div><span className="text-slate-500 font-bold">CRS:</span> <span className="text-emerald-700">{geojson.crs?.properties?.name || (isPixel ? "Pixel_Space" : "EPSG:32643")}</span></div>
-                <div className="pt-1.5 border-t border-slate-200 text-[10px] text-slate-600">
-                  <div>minX: {bbox.minX.toFixed(2)}</div>
-                  <div>maxX: {bbox.maxX.toFixed(2)}</div>
-                  <div>minY: {bbox.minY.toFixed(2)}</div>
-                  <div>maxY: {bbox.maxY.toFixed(2)}</div>
-                </div>
-                <div className="pt-1.5 border-t border-slate-200">
-                  <div><span className="text-slate-500 font-bold">FEATURES:</span> <span>{geojson.features.length}</span></div>
-                  <div><span className="text-slate-500 font-bold">SVG VIEWBOX:</span> <span>{viewWidth} × {viewHeight}</span></div>
-                </div>
-              </div>
-            )}
-
-            {/* Drawing Helper Hint Badge */}
-            {(mode === "add_polygon" || mode === "add_line") && (
-              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs text-slate-700 font-mono shadow-lg backdrop-blur-md">
-                {mode === "add_polygon"
-                  ? "Click points • Double-click to close Polygon"
-                  : "Click points • Double-click to complete Line"}
-              </div>
-            )}
-      </div>
+          {/* Drawing Helper Hint Badge */}
+          {(mode === "add_polygon" || mode === "add_line") && (
+            <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs text-slate-700 font-mono shadow-lg backdrop-blur-md">
+              {mode === "add_polygon"
+                ? "Click points • Double-click to close Polygon"
+                : "Click points • Double-click to complete Line"}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

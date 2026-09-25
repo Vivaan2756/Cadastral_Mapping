@@ -24,6 +24,7 @@ interface MappingViewerProps {
   onGeoJsonChange: (newGeoJson: GeoJSONFeatureCollection) => void;
   onDrawingFinish?: () => void;
   onEncroachingChange?: (ids: Set<string>) => void;
+  showGCP?: boolean;
 }
 
 const FEATURE_COLORS: Record<
@@ -37,28 +38,28 @@ const FEATURE_COLORS: Record<
     fillOpacity: 0.12,
   },
   building: {
-    stroke: "#d97706",
-    fill: "#f59e0b",
+    stroke: "#ea580c",
+    fill: "#f97316",
     strokeWidth: 1.8,
     fillOpacity: 0.30,
   },
   road: {
-    stroke: "#38bdf8",
-    fill: "#38bdf8",
+    stroke: "#facc15",
+    fill: "#facc15",
     strokeWidth: 2.5,
     fillOpacity: 0.15,
   },
   water: {
-    stroke: "#06b6d4",
+    stroke: "#0284c7",
     fill: "#0284c7",
     strokeWidth: 2,
     fillOpacity: 0.55,
   },
   encroachment: {
-    stroke: "#ef4444",
+    stroke: "#b91c1c",
     fill: "#ef4444",
-    strokeWidth: 2.5,
-    fillOpacity: 0.65,
+    strokeWidth: 3,
+    fillOpacity: 0.45,
     dashArray: "4 2",
   },
   default: {
@@ -80,6 +81,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
   onGeoJsonChange,
   onDrawingFinish,
   onEncroachingChange,
+  showGCP = true,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -114,6 +116,33 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
   // Keep static bounding box once calculated so coordinates stay fixed during editing
   const [initialBbox, setInitialBbox] = useState<BoundingBox | null>(null);
 
+  // Camera State for Dual Sync
+  const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
+  const [isDraggingMap, setIsDraggingMap] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    const scaleAdjust = e.deltaY > 0 ? 0.9 : 1.1;
+    setCamera(c => ({ ...c, scale: Math.max(0.1, Math.min(10, c.scale * scaleAdjust)) }));
+  }, []);
+
+  const handleMapMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 1 || mode === "select" || mode === "edit") {
+      setIsDraggingMap(true);
+      setDragStart({ x: e.clientX - camera.x, y: e.clientY - camera.y });
+    }
+  }, [mode, camera]);
+
+  const handleMapMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isDraggingMap) {
+      setCamera(c => ({ ...c, x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }));
+    }
+  }, [isDraggingMap, dragStart]);
+
+  const handleMapMouseUp = useCallback(() => {
+    setIsDraggingMap(false);
+  }, []);
+
   // Update raster dimensions when image loads
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -133,20 +162,41 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
   // Render SVG features and calculate encroachment overlaps
   const { features: svgFeatures, bbox, isPixel, overlappingFeatureIds, overlapSvgFeatures } = useMemo(() => {
     
-    // Algorithmic Smoothing for Road Networks to remove jitter/messy data
-    const processedFeatures = geojson.features.map(f => {
+    // Algorithmic Smoothing & Regularization
+    const layerOrder: Record<string, number> = {
+      parcel: 1,
+      water: 2,
+      road: 3,
+      building: 4,
+    };
+
+    let processedFeatures = geojson.features.map(f => {
       if (f.properties?.type === 'road' && f.geometry) {
         try {
-          // Apply Chaikin's smoothing algorithm to make roads flow naturally
           // @ts-ignore
           const smoothed = turf.polygonSmooth(turf.feature(f.geometry), { iterations: 3 });
-          // turf.polygonSmooth returns a FeatureCollection, we just take the first feature
           return { ...f, geometry: smoothed.features[0].geometry } as GeoJSONFeature;
         } catch (e) {
-          return f; // fallback if degenerate geometry
+          return f; 
+        }
+      }
+      if (f.properties?.type === 'building' && f.geometry) {
+        try {
+          // @ts-ignore
+          const simplified = turf.simplify(turf.feature(f.geometry), { tolerance: 1.2, highQuality: true, mutate: false });
+          return { ...f, geometry: simplified.geometry } as GeoJSONFeature;
+        } catch (e) {
+          return f;
         }
       }
       return f;
+    });
+
+    // Z-Index Sorting
+    processedFeatures.sort((a, b) => {
+      const typeA = a.properties?.type || 'parcel';
+      const typeB = b.properties?.type || 'parcel';
+      return (layerOrder[typeA] || 0) - (layerOrder[typeB] || 0);
     });
 
     const processedGeojson = { ...geojson, features: processedFeatures };
@@ -366,35 +416,48 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
 
           <div
             className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center group"
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
+            onWheel={handleWheel}
+            onMouseDown={handleMapMouseDown}
+            onMouseMove={handleMapMouseMove}
+            onMouseUp={handleMapMouseUp}
+            onMouseLeave={handleMapMouseUp}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={inputImageUrl || imageUrl || "/hero-cadastral.jpg"}
-              alt="Input Aerial Capture"
-              className="w-full h-full object-contain pointer-events-none transition-all duration-300"
-              style={leftViewMode === "DSM" ? { filter: 'contrast(180%) invert(20%) hue-rotate(190deg) brightness(90%)' } : {}}
-            />
+            <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={inputImageUrl || imageUrl || "/hero-cadastral.jpg"}
+                alt="Input Aerial Capture"
+                className="w-full h-full object-contain pointer-events-none transition-all duration-300"
+                style={leftViewMode === "DSM" ? { filter: 'contrast(180%) invert(20%) hue-rotate(190deg) brightness(90%)' } : {}}
+              />
+            </div>
           </div>
         </div>
 
       {/* Right Side: Mapped Image + Interactive SVG Vector Overlay Workspace */}
-      <div className="w-full h-full max-h-full flex flex-col bg-white rounded-2xl border border-slate-200 p-2 shadow-sm overflow-hidden">
-        <div className="w-full flex items-center justify-between pb-2 shrink-0">
-          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-emerald-700 truncate">
-            <Sparkles className="w-3.5 h-3.5" />
+      <div className="w-full h-full max-h-full flex flex-col bg-slate-950 rounded-2xl border-2 border-slate-700/80 p-2 shadow-xl overflow-hidden">
+        <div className="w-full flex items-center justify-between pb-2 shrink-0 bg-[#0f172a] px-3 py-2 border-b border-slate-800 rounded-t-xl -mt-2 -mx-2 mb-2 w-[calc(100%+16px)]">
+          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-200 truncate">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
             <span>[STATUTORY CADASTRE] LADM ISO 19152</span>
           </div>
           <div className="flex items-center gap-3 shrink-0">
             <div className="flex items-center gap-2 whitespace-nowrap">
               <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div> PARCEL
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#10b981" }}></div> PARCEL
               </span>
               <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-500"></div> ROAD
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#f97316" }}></div> BUILDING
               </span>
               <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                <div className="w-2.5 h-2.5 rounded-full bg-cyan-500"></div> WATER
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#facc15" }}></div> ROAD
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#0284c7" }}></div> WATER
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[8px]" style={{ borderBottomColor: "#ef4444" }}></div> ENCROACHMENT
               </span>
             </div>
           </div>
@@ -402,8 +465,14 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
 
         <div
           className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center"
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
+          onWheel={handleWheel}
+          onMouseDown={handleMapMouseDown}
+          onMouseMove={handleMapMouseMove}
+          onMouseUp={handleMapMouseUp}
+          onMouseLeave={handleMapMouseUp}
         >
+          <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             {/* Visual Map Image (Source of Truth raster representation) */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -421,8 +490,8 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                 mode === "add_polygon" || mode === "add_line"
                   ? "cursor-crosshair"
                   : mode === "edit"
-                  ? "cursor-default"
-                  : "cursor-pointer"
+                  ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
+                  : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
               }`}
               onClick={handleSvgClick}
               onDoubleClick={handleSvgDoubleClick}
@@ -445,15 +514,18 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                 const isHovered = feat.id === hoveredFeatureId;
                 const isEncroaching = overlappingFeatureIds.has(feat.id);
                 
-                const style = isEncroaching ? FEATURE_COLORS.encroachment : (FEATURE_COLORS[feat.type] || FEATURE_COLORS.default);
+                // Do NOT override the whole style for encroaching base features. Encroachment patches are rendered separately.
+                const style = FEATURE_COLORS[feat.type] || FEATURE_COLORS.default;
 
                 // Stroke scaling relative to viewBox dimension
                 const baseScale = viewWidth / 512;
-                const strokeColor = isSelected ? "#38bdf8" : style.stroke;
-                const fillColor = isSelected && !isEncroaching ? "#0284c7" : style.fill;
-                const fillOpacity = isSelected ? 0.45 : isHovered ? 0.3 : style.fillOpacity;
-                const strokeWidth = (isSelected ? 3.5 : isHovered ? 2.5 : style.strokeWidth) * baseScale;
-                const dashArray = style.dashArray ? style.dashArray : undefined;
+                const isSelectedBuilding = isSelected && feat.type === "building";
+                const strokeColor = isSelectedBuilding ? "#e11d48" : (isSelected ? "#facc15" : style.stroke);
+                const fillColor = isSelectedBuilding && !isEncroaching ? "rgba(225, 29, 72, 0.25)" : (isSelected && !isEncroaching ? "rgba(250, 204, 21, 0.25)" : style.fill);
+                const fillOpacity = isSelected ? 1 : isHovered ? 0.3 : style.fillOpacity;
+                const strokeWidth = (isSelectedBuilding ? 3 : isSelected ? 3.5 : isHovered ? 2.5 : style.strokeWidth) * baseScale;
+                const filter = isSelectedBuilding ? "drop-shadow(0 0 8px rgba(225, 29, 72, 0.8))" : (isSelected ? "drop-shadow(0 0 8px rgba(250, 204, 21, 0.8))" : "none");
+                const dashArray = isSelectedBuilding ? `${2 * baseScale}, ${2 * baseScale}` : (style.dashArray ? style.dashArray : undefined);
 
                 if (feat.geometryType === "LineString") {
                   return (
@@ -466,6 +538,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeDasharray={dashArray}
+                      style={{ filter }}
                       className={`transition-all duration-150 ${isEncroaching ? "animate-pulse" : ""}`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -490,7 +563,7 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                         strokeDasharray={dashArray}
                         strokeLinejoin="round"
                         className={`transition-all duration-150 ${isEncroaching ? "animate-pulse" : ""}`}
-                        style={isSelected ? { filter: 'drop-shadow(0 0 6px rgba(245, 158, 11, 0.8))' } : {}}
+                        style={{ filter }}
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelectFeature(feat.id);
@@ -540,10 +613,10 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                         key={`${rIdx}-${vIdx}`}
                         cx={pt[0]}
                         cy={pt[1]}
-                        r={(isDragging ? 7 : 5) * baseScale}
-                        fill={isDragging ? "#38bdf8" : "#ffffff"}
-                        stroke="#0284c7"
-                        strokeWidth={2 * baseScale}
+                        r={4 * baseScale}
+                        fill="#ffffff"
+                        stroke="#3b82f6"
+                        strokeWidth={1.5 * baseScale}
                         className="cursor-grab active:cursor-grabbing hover:scale-125 transition-transform"
                         onMouseDown={(e) => {
                           e.stopPropagation();
@@ -557,6 +630,58 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                     );
                   })
                 )}
+
+              {/* Centroid Marker for Selected Feature */}
+              {selectedFeature && selectedFeature.rings.length > 0 && (
+                (() => {
+                  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                  selectedFeature.rings.forEach(ring => {
+                    ring.forEach(pt => {
+                      if (pt[0] < minX) minX = pt[0];
+                      if (pt[1] < minY) minY = pt[1];
+                      if (pt[0] > maxX) maxX = pt[0];
+                      if (pt[1] > maxY) maxY = pt[1];
+                    });
+                  });
+                  const cx = (minX + maxX) / 2;
+                  const cy = (minY + maxY) / 2;
+                  
+                  return (
+                    <g transform={`translate(${cx}, ${cy})`} className="pointer-events-none">
+                      <circle cx="0" cy="0" r="4" fill="#facc15" className="animate-ping opacity-75" />
+                      <circle cx="0" cy="0" r="2" fill="#facc15" />
+                      <rect x="-60" y="-18" width="120" height="14" fill="#0f172a" rx="2" stroke="#facc15" strokeWidth="0.8" opacity="0.9" />
+                      <text x="0" y="-8.5" fontSize="7" fill="#facc15" textAnchor="middle" fontFamily="monospace" fontWeight="bold">
+                        Khasra {String(selectedFeature.id).substring(0, 10).replace('khasra_', '')} [Selected]
+                      </text>
+                    </g>
+                  );
+                })()
+              )}
+
+              {/* Visual GCP & CORS Markers */}
+              {showGCP && (
+                <>
+                  <g transform={`translate(${viewWidth * 0.8}, ${viewHeight * 0.15})`} className="pointer-events-none">
+                     <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" strokeWidth="1" className="animate-ping" />
+                     <circle cx="0" cy="0" r="4" fill="white" stroke="#ef4444" strokeWidth="1.5" />
+                     <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="#ef4444" strokeWidth="1" />
+                     <rect x="8" y="-14" width="165" height="14" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(185, 28, 28, 0.8)" strokeWidth="1" />
+                     <text x="14" y="-4" fontSize="7" fill="#fca5a5" fontFamily="monospace" fontWeight="bold">
+                       ▲ CORS-MP-BHP-04 [Datum: 501.57m AMSL]
+                     </text>
+                  </g>
+                  <g transform={`translate(${viewWidth * 0.18}, ${viewHeight * 0.85})`} className="pointer-events-none">
+                     <polygon points="0,-6 5.2,3 -5.2,3" fill="none" stroke="#06b6d4" strokeWidth="1.5" />
+                     <circle cx="0" cy="0" r="1.5" fill="#06b6d4" />
+                     <rect x="8" y="-10" width="110" height="12" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(14, 116, 144, 0.8)" strokeWidth="1" />
+                     <text x="14" y="-1.5" fontSize="7" fill="#67e8f9" fontFamily="monospace" fontWeight="bold">
+                       ▲ GCP-HZR-02 [Base Anchor]
+                     </text>
+                  </g>
+                </>
+              )}
+
 
               {/* User Drawing In-Progress Preview */}
               {drawingPoints.length > 0 && (
@@ -605,8 +730,21 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                   ))}
                 </g>
               )}
-            </svg>
 
+              {/* Survey Tile Neatline Boundary */}
+              <g className="pointer-events-none">
+                <line x1={0} y1={0} x2={0} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={viewWidth} y1={0} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={0} y1={0} x2={viewWidth} y2={0} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={0} y1={viewHeight} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                
+                <rect x={10 * (viewWidth / 512)} y={10 * (viewWidth / 512)} width={200 * (viewWidth / 512)} height={20 * (viewWidth / 512)} fill="white" fillOpacity="0.85" rx={4 * (viewWidth / 512)} />
+                <text x={16 * (viewWidth / 512)} y={24 * (viewWidth / 512)} fontSize={11 * (viewWidth / 512)} fill="#475569" fontWeight="bold" fontFamily="sans-serif">
+                  Survey Tile Boundary (Neatline)
+                </text>
+              </g>
+            </svg>
+          </div>
             <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-[10px] font-bold text-emerald-700 z-20 shadow-sm flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> Validated
             </div>

@@ -18,6 +18,7 @@ import {
   GeoJSONFeatureCollection,
   GeoJSONFeature,
   FeatureProperties,
+  calculateFeatureMetrics,
 } from "../../lib/geometry";
 import { Map, Search, Activity, Save, ArrowRight, Download, Ruler, Target } from "lucide-react";
 
@@ -44,6 +45,7 @@ export default function Home() {
   const [editorMode, setEditorMode] = useState<EditorMode>("select");
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [encroachingIds, setEncroachingIds] = useState<Set<string>>(new Set());
+  const [showGCP, setShowGCP] = useState(true);
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const handleProcessingComplete = useCallback(async (tileId: string) => {
@@ -237,6 +239,8 @@ export default function Home() {
                   onUndo={handleUndo}
                   onRedo={handleRedo}
                   onReset={handleReset}
+                  showGCP={showGCP}
+                  onToggleGCP={setShowGCP}
                 />
               </div>
               
@@ -252,6 +256,7 @@ export default function Home() {
                 onGeoJsonChange={handleGeoJsonChange}
                 onDrawingFinish={() => setEditorMode("select")}
                 onEncroachingChange={setEncroachingIds}
+                showGCP={showGCP}
               />
             </div>
 
@@ -280,22 +285,27 @@ export default function Home() {
           <div className="h-12 flex-shrink-0 border-t border-slate-200 bg-white z-20 px-4 flex items-center justify-between text-xs font-mono shadow-inner">
             <div className="flex items-center gap-4">
               {selectedFeature ? (
-                <>
-                  <div className="flex items-center gap-2 text-slate-700 font-bold">
-                    <Ruler className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>AREA: {(selectedFeature.properties?.Area_sq_m || 0).toFixed(1)} m² <span className="text-slate-400 ml-0.5">({((selectedFeature.properties?.Area_sq_m || 0) * 0.000247105).toFixed(3)} Ac)</span></span>
-                  </div>
-                  <div className="w-px h-4 bg-slate-200"></div>
-                  <div className="flex items-center gap-2 text-slate-700 font-bold">
-                    <Ruler className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>PERIMETER: {(selectedFeature.properties?.Perimeter_m || 0).toFixed(1)} m</span>
-                  </div>
-                  <div className="w-px h-4 bg-slate-200"></div>
-                  <div className="flex items-center gap-2 text-slate-700 font-bold">
-                    <Target className="w-3.5 h-3.5 text-sky-600" />
-                    <span>23.2599° N, 77.4126° E</span>
-                  </div>
-                </>
+                (() => {
+                  const { area, perimeter } = calculateFeatureMetrics(selectedFeature, true);
+                  return (
+                    <>
+                      <div className="flex items-center gap-2 text-slate-700 font-bold">
+                        <Ruler className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>AREA: {(selectedFeature.properties?.Area_sq_m || area).toFixed(1)} m² <span className="text-slate-400 ml-0.5">({((selectedFeature.properties?.Area_sq_m || area) * 0.000247105).toFixed(3)} Ac)</span></span>
+                      </div>
+                      <div className="w-px h-4 bg-slate-200"></div>
+                      <div className="flex items-center gap-2 text-slate-700 font-bold">
+                        <Ruler className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>PERIMETER: {(selectedFeature.properties?.Perimeter_m || perimeter).toFixed(1)} m</span>
+                      </div>
+                      <div className="w-px h-4 bg-slate-200"></div>
+                      <div className="flex items-center gap-2 text-slate-700 font-bold">
+                        <Target className="w-3.5 h-3.5 text-sky-600" />
+                        <span>23.2599° N, 77.4126° E</span>
+                      </div>
+                    </>
+                  );
+                })()
               ) : (
                 <div className="text-slate-400 font-bold flex items-center gap-2">
                   <Target className="w-3.5 h-3.5" /> READY

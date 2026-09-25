@@ -5,6 +5,8 @@ import {
   Copy, Map, CheckCircle2, AlertTriangle, 
   Box, Mountain, Compass, FileText, RefreshCw
 } from "lucide-react";
+import { generateCadastralDossier } from "../lib/cadastralRegistry";
+import { calculateFeatureMetrics } from "../lib/geometry";
 
 interface FeaturePanelProps {
   feature: GeoJSONFeature | null;
@@ -28,25 +30,37 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
   const props = feature.properties || {};
   const currentType = props.type || "parcel";
   
-  const mockData = React.useMemo(() => {
-    const idHash = feature?.id ? String(feature.id).split('').reduce((a, b) => a + b.charCodeAt(0), 0) : 0;
-    const isBuilding = currentType === 'building';
-    
-    return {
-      khasra: `Khasra No. ${100 + (idHash % 50)}/${(idHash % 5) + 1}`,
-      landUse: isBuilding ? 'Mixed Residential-Commercial (G+2)' : 'Public Infrastructure / Access Corridor',
-      deviation: isBuilding ? '+18.4 m²' : 'None',
-      roofElev: 500 + (idHash % 20) + ((idHash % 100) / 100),
-      height: isBuilding ? 3 + (idHash % 10) + ((idHash % 10) / 10) : 0,
-      storeys: isBuilding ? `G + ${Math.floor((idHash % 10) / 3)}` : 'N/A',
-      topologyOverlap: isEncroaching || (idHash % 3) === 0,
-      overlapDist: (1 + (idHash % 10)/10).toFixed(1),
-      gtStatus: (idHash % 2) === 0 ? 'Verified (Phase 1)' : 'Pending Field Verification (Schedule: Phase 2)',
-      corsDist: 100 + (idHash % 200),
-      rmseH: (2 + (idHash % 5) + (idHash % 10)/10).toFixed(1),
-      rmseV: (3 + (idHash % 5) + (idHash % 10)/10).toFixed(1),
-    };
-  }, [feature?.id, currentType, isEncroaching]);
+  const dossier = React.useMemo(() => {
+    return generateCadastralDossier(String(feature?.id || 'unknown'), currentType, 0);
+  }, [feature?.id, currentType]);
+
+  const isEncroachmentFail = isEncroaching || dossier.topologyAudit.mustNotOverlap === 'FAIL';
+  const hasZoningDeviation = dossier.zoningStatus.status !== 'conforming';
+  
+  const mockData = {
+    khasra: dossier.khasraNo,
+    ownerName: dossier.ownerName,
+    tenureType: dossier.tenureType,
+    ladmClass: dossier.ladmClass,
+    landUse: currentType === "water" ? "Statutory Waterbody & Eco-Buffer Corridor (Master Plan 2031: Zone Conservation)" : dossier.landUse,
+    deviation: hasZoningDeviation ? (currentType === "water" ? "Riparian Buffer Violation: Intersects River Margin by 4.8 m" : "Zone R-2 Retail Deviation") : 'None',
+    zoningTitle: currentType === "water" ? "Zone Conservation (Waterbody)" : dossier.zoningStatus.title,
+    roofElev: dossier.dsmElevation.meanRoofAmsl,
+    height: dossier.dsmElevation.structureHeightAgl,
+    storeys: dossier.dsmElevation.estimatedStoreys,
+    topologyOverlap: isEncroachmentFail,
+    overlapDist: dossier.topologyAudit.overlapDetails || '1.2',
+    gtStatus: dossier.groundTruthing.fieldStatus,
+    corsStation: dossier.groundTruthing.corsStationId,
+    rmseH: dossier.groundTruthing.rmseHorizontalCm.toFixed(1),
+    rmseV: dossier.groundTruthing.rmseVerticalCm.toFixed(1),
+  };
+  
+  const { area: dynamicArea } = React.useMemo(() => {
+    return calculateFeatureMetrics(feature, true);
+  }, [feature]);
+
+  const displayArea = props.Area_sq_m || dynamicArea;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(String(feature.id));
@@ -94,6 +108,18 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
             )}
           </div>
         </div>
+        
+        {/* Dynamic Owner & Tenure Info from Dossier */}
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Title Holder</div>
+            <div className="text-xs font-bold text-slate-800 leading-tight">{mockData.ownerName}</div>
+          </div>
+          <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tenure Class</div>
+            <div className="text-xs font-bold text-slate-800 leading-tight">{mockData.tenureType}</div>
+          </div>
+        </div>
       </div>
 
       {/* Segmented Tab Controller */}
@@ -127,17 +153,10 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
           <div className="space-y-6 animate-in fade-in duration-200">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Primary Land-Use</label>
-              <select
-                value={currentType}
-                onChange={(e) => onUpdateProperties({ type: e.target.value })}
-                className="w-full bg-white border-2 border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 shadow-sm focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all"
-              >
-                <option value="parcel">Pure Residential</option>
-                <option value="building">Mixed Residential-Commercial (G+2)</option>
-                <option value="road">Public Infrastructure / Access Corridor</option>
-                <option value="water">Water Body Buffer Zone</option>
-                <option value="encroachment">Commercial (Retail/Shopfront)</option>
-              </select>
+              <div className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 shadow-sm flex items-center justify-between">
+                <span>{mockData.landUse}</span>
+                <span className="text-[10px] font-mono text-slate-400 bg-white px-1.5 py-0.5 rounded border border-slate-200">{mockData.ladmClass}</span>
+              </div>
             </div>
 
             <div className={`p-4 rounded-2xl border-2 shadow-sm flex items-start gap-3 ${mockData.deviation !== 'None' ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}`}>
@@ -147,9 +166,9 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               )}
               <div>
-                <div className="font-bold text-slate-900 text-sm">Master Plan 2031: Zone R-2</div>
+                <div className="font-bold text-slate-900 text-sm">{mockData.zoningTitle}</div>
                 {mockData.deviation !== 'None' ? (
-                  <div className="text-red-600 font-bold mt-1.5 text-xs">COMMERCIAL DEVIATION: {mockData.deviation}</div>
+                  <div className="text-red-600 font-bold mt-1.5 text-xs">{mockData.deviation}</div>
                 ) : (
                   <div className="text-emerald-700 font-bold mt-1.5 text-xs">CONFORMING TO ZONAL REGS</div>
                 )}
@@ -160,35 +179,57 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
 
         {/* TAB 2: DSM 3D */}
         {activeTab === "ELEVATION" && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-3.5 rounded-2xl border border-amber-200 shadow-sm">
-                <div className="text-[10px] font-bold text-slate-500 uppercase mb-1">Mean Roof AMSL</div>
-                <div className="text-base font-mono font-extrabold text-amber-700">{mockData.roofElev.toFixed(2)} m</div>
+          <div className="space-y-4 animate-in fade-in duration-200">
+            {/* SVG Elevation Cross-Section */}
+            <div className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl overflow-hidden shadow-sm p-3 relative">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">Photogrammetric Cross-Section Profile</div>
+              <svg viewBox="0 0 300 120" className="w-full h-auto overflow-visible">
+                {/* DTM Ground Line */}
+                <line x1="10" y1="90" x2="290" y2="90" stroke="#78716c" strokeWidth="2" strokeDasharray="4 2" />
+                <text x="20" y="105" fontSize="8" fill="#78716c" fontFamily="monospace" fontWeight="bold">DTM Base: {((mockData.roofElev - mockData.height).toFixed(2))}m AMSL</text>
+                
+                {/* Structure Box */}
+                <rect x="100" y="30" width="100" height="60" fill="rgba(245, 158, 11, 0.2)" stroke="#d97706" strokeWidth="1.5" />
+                
+                {/* Roof Peak Datum */}
+                <line x1="60" y1="30" x2="240" y2="30" stroke="#06b6d4" strokeWidth="1.5" strokeDasharray="2 2" />
+                <text x="60" y="24" fontSize="8" fill="#0284c7" fontFamily="monospace" fontWeight="bold">Mean Roof: {mockData.roofElev.toFixed(2)}m AMSL</text>
+                
+                {/* Vertical Dimension Line */}
+                <line x1="220" y1="30" x2="220" y2="90" stroke="#10b981" strokeWidth="1.5" />
+                <polygon points="220,30 217,35 223,35" fill="#10b981" />
+                <polygon points="220,90 217,85 223,85" fill="#10b981" />
+                <text x="225" y="63" fontSize="9" fill="#059669" fontFamily="sans-serif" fontWeight="bold">{mockData.height.toFixed(2)}m (AGL)</text>
+              </svg>
+            </div>
+
+            {/* Volumetric Telemetry Matrix */}
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                <div className="text-[9px] font-bold text-slate-400 uppercase">Footprint Area</div>
+                <div className="font-mono font-bold text-slate-800 mt-0.5">{displayArea.toFixed(1)} m²</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-3.5 rounded-2xl border border-amber-200 shadow-sm">
-                <div className="text-[10px] font-bold text-slate-500 uppercase mb-1">Structure (AGL)</div>
-                <div className="text-base font-mono font-extrabold text-amber-700">{mockData.height.toFixed(2)} m</div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                <div className="text-[9px] font-bold text-slate-400 uppercase">Extruded Volume</div>
+                <div className="font-mono font-bold text-slate-800 mt-0.5">{(displayArea * mockData.height).toFixed(1)} m³</div>
               </div>
-              <div className="bg-gradient-to-br from-sky-50 to-blue-50 p-3.5 rounded-2xl border border-sky-200 shadow-sm">
-                <div className="text-[10px] font-bold text-slate-500 uppercase mb-1">Terrain Base (DTM)</div>
-                <div className="text-base font-mono font-extrabold text-sky-700">{(mockData.roofElev - mockData.height).toFixed(2)} m</div>
-              </div>
-              <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="text-[10px] font-bold text-slate-500 uppercase mb-1">Est. Storeys</div>
-                <div className="text-base font-extrabold text-slate-800">{mockData.storeys}</div>
+              <div className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm col-span-2 flex items-center justify-between">
+                <div>
+                  <div className="text-[9px] font-bold text-slate-400 uppercase">Storey Classification</div>
+                  <div className="font-bold text-slate-800 mt-0.5 text-[11px]">{mockData.storeys}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[9px] font-bold text-slate-400 uppercase">Sensor / Source</div>
+                  <div className="font-bold text-slate-800 mt-0.5 text-[10px]">Drone Ortho (5cm GSD)</div>
+                </div>
               </div>
             </div>
-            
-            <div className="mt-4 p-4 border-2 border-slate-200 rounded-2xl bg-slate-50 shadow-sm">
-              <div className="text-[10px] font-bold text-slate-500 uppercase mb-3 text-center">Elevation Extrusion Profile</div>
-              <div className="h-5 w-full bg-slate-200 rounded-full overflow-hidden flex">
-                <div className="h-full bg-gradient-to-r from-sky-400 to-sky-500 rounded-l-full" style={{ width: '60%' }}></div>
-                <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500" style={{ width: '15%' }}></div>
-              </div>
-              <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase mt-2">
-                <span>DTM Base</span>
-                <span>Roof Extrusion</span>
+
+            {/* Zoning Elevation Audit */}
+            <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-lg flex items-start gap-2 shadow-sm">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="text-[10px] font-bold text-emerald-800 uppercase tracking-wide leading-tight">
+                Complies with MP Bhumi Vikas Niyam Max Permissible Height (12.0m Limit)
               </div>
             </div>
           </div>
@@ -218,13 +259,8 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
                   </div>
                   {mockData.topologyOverlap && !isValidating && (
                     <div className="bg-red-50 p-2 rounded-lg border border-red-100 mt-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] text-red-600 font-sans uppercase">Overlap Area</span>
-                        <span className="text-red-700">{mockData.overlapDist} m²</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] text-red-600 font-sans uppercase">Encroachment Severity</span>
-                        <span className="text-red-700">High (Statutory Buffer Violation)</span>
+                      <div className="text-[10px] text-red-700 font-bold bg-red-100/50 p-2 rounded-lg border border-red-200">
+                        {currentType === "water" ? "Riparian Buffer Violation: Intersects River Margin by 4.8 m" : `Intersects Road RoW Corridor by 1.2 m (Area: ${mockData.overlapDist} m²)`}
                       </div>
                     </div>
                   )}
@@ -262,7 +298,7 @@ export const FeaturePanel: React.FC<FeaturePanelProps> = ({
               </div>
               <div className="flex justify-between items-center border-b border-slate-200 pb-3">
                 <span className="font-bold text-slate-500 uppercase">CORS Station</span>
-                <span className="text-slate-800 font-mono font-bold bg-white border border-slate-200 shadow-sm px-2.5 py-1 rounded-lg">CORS-MP-BHP-04</span>
+                <span className="text-slate-800 font-mono font-bold bg-white border border-slate-200 shadow-sm px-2.5 py-1 rounded-lg">{mockData.corsStation}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-bold text-slate-500 uppercase">Est. RMSE</span>

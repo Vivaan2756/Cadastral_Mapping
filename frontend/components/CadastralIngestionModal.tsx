@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, Map, Activity, UploadCloud, ChevronRight, Server, Globe2, Hexagon, Sparkles, Shield } from "lucide-react";
+import { matchUploadedFileToTile } from "../lib/demoData";
 
 interface CadastralIngestionModalProps {
   onComplete: (tileId: string) => void;
@@ -50,13 +51,15 @@ export const CadastralIngestionModal: React.FC<CadastralIngestionModalProps> = (
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      startProcessing("huzur_mapped_01");
+      const filename = e.dataTransfer.files[0].name;
+      startProcessing(matchUploadedFileToTile(filename));
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      startProcessing("huzur_mapped_01");
+      const filename = e.target.files[0].name;
+      startProcessing(matchUploadedFileToTile(filename));
     }
   };
 

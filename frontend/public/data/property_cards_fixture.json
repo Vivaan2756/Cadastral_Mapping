@@ -1,0 +1,202 @@
+{
+  "08-412-A": {
+    "khasraNo": "08-412-A",
+    "khasraId": "08-412-A",
+    "khataNumber": "KH-782/2023",
+    "plotId": "PL-BGK-08412A",
+    "featureClass": "Agricultural / Semi-Urban",
+    "coOwners": [
+      "Rameshwar P. (50%)",
+      "Sunita Bai (50%)"
+    ],
+    "annualRevenue": "₹ 1,420 / annum",
+    "soilClassification": "Medium Black (Kali-2)",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841201A",
+    "statutoryArea": 1248.3,
+    "alertType": "ROW_OVERLAP",
+    "alertDetails": "Parcel intersects the statutory 15m Road Right-of-Way (ROW) corridor.",
+    "associatedTileId": "00_00"
+  },
+  "08-412-B": {
+    "khasraNo": "08-412-B",
+    "khasraId": "08-412-B",
+    "khataNumber": "KH-783/2023",
+    "plotId": "PL-BGK-08412B",
+    "featureClass": "Residential / Homestead",
+    "coOwners": [
+      "Devendra Verma (100%)"
+    ],
+    "annualRevenue": "₹ 2,150 / annum",
+    "soilClassification": "Alluvial Silty",
+    "mortgageStatus": "Under Dispute",
+    "ulpin": "4829100841202B",
+    "statutoryArea": 864.5,
+    "alertType": "DISPUTE",
+    "alertDetails": "Flagged boundary dispute under Section 129 MP Land Revenue Code.",
+    "associatedTileId": "00_03"
+  },
+  "08-412-C": {
+    "khasraNo": "08-412-C",
+    "khasraId": "08-412-C",
+    "khataNumber": "KH-784/2023",
+    "plotId": "PL-BGK-08412C",
+    "featureClass": "Agricultural Irrigated",
+    "coOwners": [
+      "Kamla Devi (100%)"
+    ],
+    "annualRevenue": "₹ 980 / annum",
+    "soilClassification": "Deep Black Clayey",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841203C",
+    "statutoryArea": 1540.2,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_05"
+  },
+  "08-412-D": {
+    "khasraNo": "08-412-D",
+    "khasraId": "08-412-D",
+    "khataNumber": "KH-785/2023",
+    "plotId": "PL-BGK-08412D",
+    "featureClass": "Commercial / Warehouse",
+    "coOwners": [
+      "Bhopal Agro Logistics Ltd."
+    ],
+    "annualRevenue": "₹ 5,800 / annum",
+    "soilClassification": "Constructed Mixed",
+    "mortgageStatus": "Mortgaged to Bank",
+    "ulpin": "4829100841204D",
+    "statutoryArea": 2110,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_06"
+  },
+  "08-412-E": {
+    "khasraNo": "08-412-E",
+    "khasraId": "08-412-E",
+    "khataNumber": "KH-786/2023",
+    "plotId": "PL-BGK-08412E",
+    "featureClass": "Riparian / Wetland Buffer",
+    "coOwners": [
+      "Madhya Pradesh State Revenue Dept."
+    ],
+    "annualRevenue": "₹ 0 (Government)",
+    "soilClassification": "Riverine Silt",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841205E",
+    "statutoryArea": 950.4,
+    "alertType": "WATER_BUFFER",
+    "alertDetails": "Parcel intersects the 30m NGT statutory water-body buffer envelope.",
+    "associatedTileId": "00_08"
+  },
+  "08-412-F": {
+    "khasraNo": "08-412-F",
+    "khasraId": "08-412-F",
+    "khataNumber": "KH-787/2023",
+    "plotId": "PL-BGK-08412F",
+    "featureClass": "Agricultural Single Crop",
+    "coOwners": [
+      "Harishankar Sharma (100%)"
+    ],
+    "annualRevenue": "₹ 1,120 / annum",
+    "soilClassification": "Medium Black",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841206F",
+    "statutoryArea": 1320,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_09"
+  },
+  "08-412-G": {
+    "khasraNo": "08-412-G",
+    "khasraId": "08-412-G",
+    "khataNumber": "KH-788/2023",
+    "plotId": "PL-BGK-08412G",
+    "featureClass": "Residential Abadi",
+    "coOwners": [
+      "Mohd. Imran (50%)",
+      "Zubair Ahmed (50%)"
+    ],
+    "annualRevenue": "₹ 1,750 / annum",
+    "soilClassification": "Red Gravel Mixed",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841207G",
+    "statutoryArea": 720.6,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_11"
+  },
+  "08-412-H": {
+    "khasraNo": "08-412-H",
+    "khasraId": "08-412-H",
+    "khataNumber": "KH-789/2023",
+    "plotId": "PL-BGK-08412H",
+    "featureClass": "Industrial Facility",
+    "coOwners": [
+      "Kalan Precision Tools LLP"
+    ],
+    "annualRevenue": "₹ 8,400 / annum",
+    "soilClassification": "Engineered Subgrade",
+    "mortgageStatus": "Mortgaged to Bank",
+    "ulpin": "4829100841208H",
+    "statutoryArea": 3450,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_12"
+  },
+  "08-412-I": {
+    "khasraNo": "08-412-I",
+    "khasraId": "08-412-I",
+    "khataNumber": "KH-790/2023",
+    "plotId": "PL-BGK-08412I",
+    "featureClass": "Orchard / Horticulture",
+    "coOwners": [
+      "Lata Bai (100%)"
+    ],
+    "annualRevenue": "₹ 1,350 / annum",
+    "soilClassification": "Deep Loamy Black",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841209I",
+    "statutoryArea": 1680,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "01_01"
+  },
+  "08-412-J": {
+    "khasraNo": "08-412-J",
+    "khasraId": "08-412-J",
+    "khataNumber": "KH-791/2023",
+    "plotId": "PL-BGK-08412J",
+    "featureClass": "Public Utility / Panchayat",
+    "coOwners": [
+      "Gram Panchayat Bairagarh Kalan"
+    ],
+    "annualRevenue": "₹ 0 (Public)",
+    "soilClassification": "Alluvial Loam",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841210J",
+    "statutoryArea": 1100,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "01_06"
+  },
+  "08-412-K": {
+    "khasraNo": "08-412-K",
+    "khasraId": "08-412-K",
+    "khataNumber": "KH-792/2023",
+    "plotId": "PL-BGK-08412K",
+    "featureClass": "AI Ortho Drone Surveyed Parcel",
+    "coOwners": [
+      "State Land Registry / Drone Extraction"
+    ],
+    "annualRevenue": "₹ 1,420 / annum",
+    "soilClassification": "Medium Black (Kali-2)",
+    "mortgageStatus": "Unencumbered",
+    "ulpin": "4829100841211K",
+    "statutoryArea": 1248.3,
+    "alertType": "NONE",
+    "alertDetails": null,
+    "associatedTileId": "00_16"
+  }
+}

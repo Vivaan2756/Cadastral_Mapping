@@ -1066,13 +1066,12 @@ export const Page2Reconcile: React.FC = () => {
             <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80 text-xs font-mono">
               <span className="text-zinc-400">Net Variance (Δ):</span>
               <span
-                className={`font-bold text-sm ${
-                  netVariance > 0
+                className={`font-bold text-sm ${netVariance > 0
                     ? "text-rose-400"
                     : netVariance < 0
-                    ? "text-amber-400"
-                    : "text-emerald-400"
-                }`}
+                      ? "text-amber-400"
+                      : "text-emerald-400"
+                  }`}
               >
                 {netVariance >= 0 ? `+${netVariance.toFixed(2)}` : netVariance.toFixed(2)} m²
               </span>
@@ -1107,13 +1106,12 @@ export const Page2Reconcile: React.FC = () => {
               <div className="flex justify-between">
                 <span className="text-zinc-400">Mortgage Status:</span>
                 <span
-                  className={`font-medium ${
-                    activeRoR.mortgageStatus === "Under Dispute"
+                  className={`font-medium ${activeRoR.mortgageStatus === "Under Dispute"
                       ? "text-rose-400"
                       : activeRoR.mortgageStatus === "Mortgaged to Bank"
-                      ? "text-amber-400"
-                      : "text-emerald-400"
-                  }`}
+                        ? "text-amber-400"
+                        : "text-emerald-400"
+                    }`}
                 >
                   {activeRoR.mortgageStatus}
                 </span>

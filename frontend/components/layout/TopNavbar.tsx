@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -8,9 +10,9 @@ export const TopNavbar: React.FC = () => {
 
   const links = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Data Ingestion', href: '/ingestion' },
-    { name: 'WebGIS Viewer', href: '/webgis' },
-    { name: 'Objection Portal', href: '/objections' },
+    { name: 'Data Ingestion', href: '/console' },
+    { name: 'WebGIS Viewer', href: '/page2-reconcile' },
+    { name: 'Objection Portal', href: '/page3-dispute' },
   ];
 
   return (

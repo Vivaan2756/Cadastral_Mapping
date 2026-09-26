@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import { TopNavbar } from "../../components/layout/TopNavbar";
 import { CadastralIngestionModal } from "../../components/CadastralIngestionModal";
 import { MappingViewer } from "../../components/MappingViewer";
 import { MappingToolbar, EditorMode } from "../../components/MappingToolbar";
@@ -170,7 +171,7 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-100 overflow-hidden select-none font-sans text-slate-800">
-      
+      <TopNavbar />
       {/* REGION A: Top Header */}
       <header className="h-14 flex-shrink-0 border-b border-slate-200 bg-white z-20 px-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">

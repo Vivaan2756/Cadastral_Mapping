@@ -487,10 +487,10 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
               ref={svgRef}
               viewBox={`0 0 ${viewWidth} ${viewHeight}`}
               className={`absolute inset-0 w-full h-full z-10 ${mode === "add_polygon" || mode === "add_line"
-                  ? "cursor-crosshair"
-                  : mode === "edit"
-                    ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
-                    : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
+                ? "cursor-crosshair"
+                : mode === "edit"
+                  ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
+                  : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
                 }`}
               onClick={handleSvgClick}
               onDoubleClick={handleSvgDoubleClick}

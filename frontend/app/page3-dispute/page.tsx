@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShieldAlert, ArrowLeft, FileText, CheckCircle, Clock } from "lucide-react";
+import { TopNavbar } from "../../components/layout/TopNavbar";
 
 export default function Page3Dispute() {
   const [flaggedKhasra, setFlaggedKhasra] = useState<string>("08-412-B");
@@ -17,8 +18,10 @@ export default function Page3Dispute() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-screen items-center justify-center bg-[#070d1e] text-zinc-100 p-6 font-sans">
-      <div className="max-w-xl w-full bg-[#0b132b] border border-zinc-800 rounded-2xl p-8 shadow-2xl space-y-6">
+    <div className="flex flex-col h-screen w-screen bg-[#070d1e] text-zinc-100 font-sans overflow-hidden">
+      <TopNavbar />
+      <div className="flex-1 flex flex-col items-center justify-center p-6 overflow-y-auto">
+        <div className="max-w-xl w-full bg-[#0b132b] border border-zinc-800 rounded-2xl p-8 shadow-2xl space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-rose-950/60 border border-rose-700/60 flex items-center justify-center text-rose-400 flex-shrink-0">
             <ShieldAlert className="w-8 h-8" />
@@ -68,6 +71,7 @@ export default function Page3Dispute() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

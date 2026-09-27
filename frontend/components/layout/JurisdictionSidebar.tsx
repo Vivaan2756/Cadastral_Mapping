@@ -11,7 +11,7 @@ export const JurisdictionSidebar: React.FC<JurisdictionSidebarProps> = ({ onTile
   const [district, setDistrict] = useState('Bhopal');
   const [tehsil, setTehsil] = useState('Huzur');
   const [ward, setWard] = useState('Ward 14 (Urban)');
-  const [sheet, setSheet] = useState('Khasra Sheet #03');
+  const [sheet, setSheet] = useState('Khasra Sheet #01');
 
   const sheets = [
     { id: 'huzur_mapped_01', name: 'Khasra Sheet #01' },
@@ -89,7 +89,7 @@ export const JurisdictionSidebar: React.FC<JurisdictionSidebarProps> = ({ onTile
 
         <div className="space-y-2">
           <label className="text-[11px] font-extrabold text-white uppercase tracking-widest">Village / Survey Sheet</label>
-          <select value={sheets.find(s => s.name === sheet)?.id || 'huzur_mapped_03'} onChange={handleSheetChange} className="w-full bg-white border border-white rounded-md px-3 py-2.5 text-sm font-bold text-[#1e3a8a] outline-none cursor-pointer hover:bg-blue-50 transition-colors shadow-sm">
+          <select value={sheets.find(s => s.name === sheet)?.id || 'huzur_mapped_01'} onChange={handleSheetChange} className="w-full bg-white border border-white rounded-md px-3 py-2.5 text-sm font-bold text-[#1e3a8a] outline-none cursor-pointer hover:bg-blue-50 transition-colors shadow-sm">
             {sheets.map(s => (
               <option key={s.id} value={s.id} className="bg-white text-slate-800">{s.name}</option>
             ))}

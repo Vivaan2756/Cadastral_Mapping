@@ -12,7 +12,7 @@ export const TopNavbar: React.FC = () => {
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Data Ingestion', href: '/console' },
     { name: 'WebGIS Viewer', href: '/page2-reconcile' },
-    { name: 'Objection Portal', href: '/page3-dispute' },
+    { name: 'Dispute Resolution Desk', href: '/page3-dispute' },
   ];
 
   return (

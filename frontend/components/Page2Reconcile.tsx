@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as maplibregl from "maplibre-gl";
@@ -8,32 +8,86 @@ import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Protocol } from "pmtiles";
 import {
-  PILOT_HIERARCHY,
-  KHASRA_METADATA_REGISTRY,
-  RoRData,
-  SurveyRecord,
-  projectGeoJsonToWgs84,
-  getWgs84Bbox,
-  deriveImageFootprint,
-} from "../lib/reconciliation";
+  CADASTRAL_DATASETS,
+  CadastralDatasetConfig,
+  SelectedParcel,
+  AdminEntity,
+  AdministrativeHierarchyIndexed,
+} from "../lib/cadastralConfig";
 import {
-  fetchTileGeoJSON,
-  getCommittedCadastre,
-  getSavedTileEdits,
-  getSurveySpatialRecords,
-} from "../lib/demoData";
-import { GeoJSONFeatureCollection, GeoJSONFeature, calculatePolygonArea } from "../lib/geometry";
+  fetchAdminHierarchyIndexed,
+  getStateList,
+  getDistrictsForState,
+  getSubdistrictsForDistrict,
+  getVillagesForSubdistrict,
+  getDistrictCentroid,
+  getSubdistrictCentroid,
+  getVillageCentroid,
+} from "../lib/adminConfig";
+import { getSurveySpatialRecords } from "../lib/demoData";
 import {
-  Map as MapIcon,
-  AlertTriangle,
-  FileText,
-  Scale,
-  ShieldAlert,
-  CheckCircle2,
+  Layers,
   ChevronRight,
   Compass,
-  Layers,
+  CheckCircle2,
+  ShieldAlert,
+  Search,
+  Building2,
+  Database,
+  Route,
+  Droplets,
+  Waves,
+  Home,
+  X,
 } from "lucide-react";
+
+// Helper to parse HSTORE / key-value other_tags from OSM PMTiles
+function parseOtherTags(otherTagsStr: unknown): Record<string, string> {
+  const result: Record<string, string> = {};
+  if (typeof otherTagsStr !== "string" || !otherTagsStr.trim()) return result;
+  const regex = /"([^"]+)"=>"([^"]+)"/g;
+  let match;
+  while ((match = regex.exec(otherTagsStr)) !== null) {
+    result[match[1]] = match[2];
+  }
+  return result;
+}
+
+// Convert property names into clean human-readable labels
+function formatPropertyName(key: string): string {
+  const specialMap: Record<string, string> = {
+    highway: "Road Type",
+    building: "Building Type",
+    waterway: "Waterway Type",
+    natural: "Natural Feature",
+    water: "Water Type",
+    osm_id: "OSM ID",
+    osm_way_id: "OSM Way ID",
+    maxspeed: "Speed Limit",
+    oneway: "One Way",
+    surface: "Surface",
+    lanes: "Lanes",
+    bridge: "Bridge",
+    tunnel: "Tunnel",
+    access: "Access",
+    ref: "Reference / Route No",
+    housenumber: "House Number",
+    "addr:housenumber": "House Number",
+    "addr:street": "Street",
+    "addr:city": "City",
+    "addr:postcode": "Postcode",
+    postcode: "Postcode",
+    amenity: "Amenity",
+    intermittent: "Intermittent",
+    width: "Width",
+  };
+  if (specialMap[key]) return specialMap[key];
+
+  return key
+    .replace(/_/g, " ")
+    .replace(/:/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 // Register MapLibre worker and PMTiles protocol globally once
 let isWorkerConfigured = false;
@@ -43,7 +97,7 @@ function ensureMaplibreWorkerConfigured() {
       setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
       isWorkerConfigured = true;
     } catch (e) {
-      console.warn("MapLibre setWorkerUrl warning:", e);
+      console.warn("[TerraMap] MapLibre setWorkerUrl:", e);
     }
   }
 }
@@ -56,7 +110,7 @@ function ensurePmtilesProtocolRegistered() {
       maplibregl.addProtocol("pmtiles", protocol.tile);
       isProtocolRegistered = true;
     } catch (e) {
-      console.warn("PMTiles protocol registration notice:", e);
+      console.warn("[TerraMap] PMTiles protocol already registered or notice:", e);
     }
   }
 }
@@ -65,1086 +119,1392 @@ export const Page2Reconcile: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Mounted flag to ensure flawless hydration
+  // Mounted flag to avoid hydration mismatch
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  // Administrative Cascading State
-  const [selectedState] = useState<string>(PILOT_HIERARCHY.state);
-  const [selectedDistrict] = useState<string>(PILOT_HIERARCHY.district);
-  const [selectedTehsil] = useState<string>(PILOT_HIERARCHY.tehsil);
-  const [selectedVillage] = useState<string>(PILOT_HIERARCHY.village);
+  // Administrative Registry Data
+  const [registry, setRegistry] = useState<AdministrativeHierarchyIndexed | null>(null);
+  const [isLoadingRegistry, setIsLoadingRegistry] = useState<boolean>(true);
 
-  // Consistent SSR/Client initial survey selection
-  const [selectedKhasraId, setSelectedKhasraId] = useState<string>("08-412-A");
+  // Administrative Selections (Stores both display name and administrative codes)
+  const [selectedState, setSelectedState] = useState<AdminEntity | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<AdminEntity | null>(null);
+  const [selectedSubdistrict, setSelectedSubdistrict] = useState<AdminEntity | null>(null);
+  const [selectedVillage, setSelectedVillage] = useState<AdminEntity | null>(null);
 
-  // Persisted survey records from Page 1
-  const [persistedRecords, setPersistedRecords] = useState<Record<string, SurveyRecord>>({});
-
-  // Dispute state
-  const [flaggedKhasraId, setFlaggedKhasraId] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Authoritative Cadastre Datasets
-  const [allParcelsGeoJSON, setAllParcelsGeoJSON] = useState<GeoJSONFeatureCollection | null>(null);
-  const [publicInfraGeoJSON, setPublicInfraGeoJSON] = useState<GeoJSONFeatureCollection | null>(null);
-  const [propertyCards, setPropertyCards] = useState<Record<string, RoRData>>(KHASRA_METADATA_REGISTRY);
+  // Parcel & Map state
+  const [selectedParcel, setSelectedParcel] = useState<SelectedParcel | null>(null);
+  const [mapStatus, setMapStatus] = useState<"INITIALIZING" | "CONNECTED" | "ERROR">("INITIALIZING");
+  const [activeCadastralConfig, setActiveCadastralConfig] = useState<CadastralDatasetConfig | null>(null);
 
   // MapLibre references
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
-  // Mark mounted and sync query param / localStorage state
+  // Initialize Worker & Protocol & load indexed administrative hierarchy
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== "undefined") {
-      const records = getSurveySpatialRecords();
-      setPersistedRecords(records);
-
-      const urlSurvey = searchParams ? searchParams.get("survey") : null;
-      if (urlSurvey) {
-        setSelectedKhasraId(urlSurvey);
-      } else {
-        const storedActiveTile = localStorage.getItem("alpha_cadastre_active_tile");
-        const tileToKhasra: Record<string, string> = {
-          "00_00": "08-412-A",
-          "huzur_mapped_01": "08-412-K",
-          "00_03": "08-412-B",
-          "huzur_mapped_02": "08-412-B",
-          "00_05": "08-412-C",
-          "huzur_mapped_03": "08-412-C",
-        };
-        if (storedActiveTile && tileToKhasra[storedActiveTile]) {
-          setSelectedKhasraId(tileToKhasra[storedActiveTile]);
-        }
-      }
-    }
-  }, [searchParams]);
-
-  // Combined survey options: Statutory Khasras + Page 1 Generated Surveys
-  const availableSurveys = useMemo(() => {
-    const list = [...PILOT_HIERARCHY.khasras];
-    for (const key of Object.keys(persistedRecords)) {
-      if (!list.includes(key)) {
-        list.unshift(key);
-      }
-    }
-    return list;
-  }, [persistedRecords]);
-
-  // Load authoritative fixtures on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function loadFixtures() {
-      try {
-        const [parcelsRes, infraRes, cardsRes] = await Promise.all([
-          fetch("/data/cadastre_parcels.geojson"),
-          fetch("/data/public_infrastructure.geojson"),
-          fetch("/data/property_cards_fixture.json"),
-        ]);
-
-        if (parcelsRes.ok) {
-          const pData = await parcelsRes.json();
-          if (isMounted) setAllParcelsGeoJSON(pData);
-        }
-        if (infraRes.ok) {
-          const iData = await infraRes.json();
-          if (isMounted) setPublicInfraGeoJSON(iData);
-        }
-        if (cardsRes.ok) {
-          const cData = await cardsRes.json();
-          if (isMounted) setPropertyCards(cData);
-        }
-      } catch (e) {
-        console.warn("[Page2] Fixture loading notice:", e);
-      }
-    }
-
-    loadFixtures();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  // Check selected survey record from persisted SurveyRecords
-  const currentSurveyRecord = useMemo<SurveyRecord | null>(() => {
-    if (persistedRecords[selectedKhasraId]) {
-      return persistedRecords[selectedKhasraId];
-    }
-    return null;
-  }, [persistedRecords, selectedKhasraId]);
-
-  // Active RoR metadata for selected Khasra
-  const activeRoR = useMemo<RoRData>(() => {
-    const fromRecord = currentSurveyRecord?.surveyInfo;
-    const base = propertyCards[selectedKhasraId] || KHASRA_METADATA_REGISTRY[selectedKhasraId];
-
-    if (fromRecord) {
-      return {
-        khasraId: selectedKhasraId,
-        khataNumber: fromRecord.khataNumber || base?.khataNumber || "KH-792/2023",
-        plotId: `PL-BGK-${selectedKhasraId.replace(/-/g, "")}`,
-        featureClass: fromRecord.featureClass || fromRecord.landUse || base?.featureClass || "AI Ortho Drone Surveyed Parcel",
-        coOwners: fromRecord.coOwners || (fromRecord.owner ? [fromRecord.owner] : base?.coOwners || ["State Land Registry / Drone Extraction"]),
-        annualRevenue: fromRecord.annualRevenue || base?.annualRevenue || "₹ 1,420 / annum",
-        soilClassification: fromRecord.soilClassification || base?.soilClassification || "Medium Black (Kali-2)",
-        mortgageStatus: fromRecord.mortgageStatus || base?.mortgageStatus || "Unencumbered",
-        ulpin: fromRecord.ulpin || base?.ulpin || `482910${selectedKhasraId.replace(/[^0-9A-Z]/g, "")}`,
-        statutoryArea: fromRecord.area || base?.statutoryArea || 1248.3,
-        alertType: (fromRecord.alertType as any) || base?.alertType || "NONE",
-        alertDetails: fromRecord.alertDetails || base?.alertDetails,
-        associatedTileId: fromRecord.associatedTileId || base?.associatedTileId || "huzur_mapped_01",
-      };
-    }
-
-    return (
-      base || {
-        khasraId: selectedKhasraId,
-        khataNumber: "KH-799/2023",
-        plotId: `PL-BGK-${selectedKhasraId.replace(/-/g, "")}`,
-        featureClass: "Agricultural Parcel",
-        coOwners: ["State Land Allottee"],
-        annualRevenue: "₹ 1,000 / annum",
-        soilClassification: "Medium Black",
-        mortgageStatus: "Unencumbered",
-        ulpin: `482910${selectedKhasraId.replace(/[^0-9A-Z]/g, "")}`,
-        statutoryArea: 1000.0,
-        associatedTileId: "00_00",
-      }
-    );
-  }, [selectedKhasraId, propertyCards, currentSurveyRecord]);
-
-  // Load flagged dispute from localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("flagged_khasra_id");
-      if (stored) {
-        setFlaggedKhasraId(stored);
-      }
-    }
-  }, []);
-
-  // Extract statutory feature for selected Khasra
-  const selectedLegalFeature = useMemo<GeoJSONFeature | null>(() => {
-    if (allParcelsGeoJSON && allParcelsGeoJSON.features) {
-      const found = allParcelsGeoJSON.features.find(
-        (f) =>
-          f.properties?.khasra_no === selectedKhasraId ||
-          f.properties?.khasra === selectedKhasraId ||
-          f.properties?.khasraId === selectedKhasraId ||
-          f.id === `khasra_${selectedKhasraId.replace(/-/g, "_")}`
-      );
-      if (found) return found;
-    }
-
-    if (currentSurveyRecord?.legalGeometry) {
-      return currentSurveyRecord.legalGeometry;
-    }
-
-    return null;
-  }, [allParcelsGeoJSON, selectedKhasraId, currentSurveyRecord]);
-
-  // Extract AI Ground Truth geometry (Page 1 committed -> fallback deterministic geometry)
-  const selectedAiFeature = useMemo<GeoJSONFeature | null>(() => {
-    if (selectedLegalFeature) {
-      return selectedLegalFeature;
-    }
-
-    if (currentSurveyRecord?.aiGeometry) {
-      return currentSurveyRecord.aiGeometry;
-    }
-
-    if (typeof window !== "undefined") {
-      const committed = getCommittedCadastre();
-      if (committed && committed.features && committed.features.length > 0) {
-        const found = committed.features.find(
-          (f) =>
-            f.properties?.khasra_no === selectedKhasraId ||
-            f.properties?.khasra === selectedKhasraId ||
-            f.properties?.survey_number?.includes(selectedKhasraId) ||
-            f.properties?.type === "parcel"
-        );
-        if (found) {
-          const wgs = projectGeoJsonToWgs84({ type: "FeatureCollection", features: [found] });
-          if (wgs.features[0]) return wgs.features[0];
-        }
-      }
-    }
-
-    return null;
-  }, [selectedKhasraId, selectedLegalFeature, currentSurveyRecord]);
-
-  // Calculate Legal & AI Areas for selected Khasra
-  const { legalArea, aiArea, netVariance } = useMemo(() => {
-    let lArea = activeRoR.statutoryArea;
-    let aArea = activeRoR.statutoryArea;
-
-    if (selectedLegalFeature && selectedLegalFeature.geometry?.type === "Polygon") {
-      const calculated = calculatePolygonArea(selectedLegalFeature.geometry.coordinates[0]);
-      if (calculated > 0) lArea = Math.round(calculated * 10) / 10;
-    }
-
-    if (selectedAiFeature && selectedAiFeature.geometry?.type === "Polygon") {
-      const calculated = calculatePolygonArea(selectedAiFeature.geometry.coordinates[0]);
-      if (calculated > 0) {
-        aArea =
-          selectedAiFeature === selectedLegalFeature
-            ? Math.round((lArea + 13.15) * 10) / 10
-            : Math.round(calculated * 10) / 10;
-      }
-    }
-
-    const diff = Math.round((aArea - lArea) * 100) / 100;
-    return { legalArea: lArea, aiArea: aArea, netVariance: diff };
-  }, [activeRoR, selectedLegalFeature, selectedAiFeature]);
-
-  // Check dispute status
-  const isDisputed = useMemo(() => {
-    return selectedKhasraId === flaggedKhasraId || activeRoR.alertType === "DISPUTE";
-  }, [selectedKhasraId, flaggedKhasraId, activeRoR]);
-
-  // Initialize MapLibre GL Map with Local PMTiles
-  useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
-
-    // 1. Ensure MapLibre Worker is configured
     ensureMaplibreWorkerConfigured();
-
-    // 2. Ensure PMTiles protocol is registered
     ensurePmtilesProtocolRegistered();
 
-    // Centroid for Bairagarh Kalan / Huzur, Bhopal pilot area
-    const initialCenter: [number, number] = [77.414, 23.2566];
-
-    // Real Map Basemap + Local PMTiles Vector Sources (roads, buildings, water from public/data/)
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      maxZoom: 19,
-      style: {
-        version: 8,
-        sources: {
-          "satellite-basemap": {
-            type: "raster",
-            tiles: [
-              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-            ],
-            tileSize: 256,
-            attribution: "Esri, Maxar, Earthstar Geographics",
-            maxzoom: 18,
-          },
-          "osm-fallback": {
-            type: "raster",
-            tiles: [
-              "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            ],
-            tileSize: 256,
-            maxzoom: 18,
-          },
-          "pmtiles-water": {
-            type: "vector",
-            url: "pmtiles:///data/sector_water.pmtiles",
-          },
-          "pmtiles-buildings": {
-            type: "vector",
-            url: "pmtiles:///data/sector_buildings.pmtiles",
-          },
-          "pmtiles-roads": {
-            type: "vector",
-            url: "pmtiles:///data/sector_roads.pmtiles",
-          },
-        },
-        layers: [
-          // 0. Real World Satellite Imagery Base Layer
-          {
-            id: "satellite-layer",
-            type: "raster",
-            source: "satellite-basemap",
-            minzoom: 0,
-            maxzoom: 24,
-            paint: {
-              "raster-opacity": 0.95,
-              "raster-saturation": 0.15,
-              "raster-contrast": 0.2,
-            },
-          },
-          // 1. PMTiles Context Water Fill & Outlines (Vibrant Marine Blue)
-          {
-            id: "context-water-fill",
-            type: "fill",
-            source: "pmtiles-water",
-            "source-layer": "water",
-            paint: {
-              "fill-color": "#0284c7",
-              "fill-opacity": 0.75,
-            },
-          },
-          {
-            id: "context-water-line",
-            type: "line",
-            source: "pmtiles-water",
-            "source-layer": "water",
-            paint: {
-              "line-color": "#38bdf8",
-              "line-width": 2.0,
-            },
-          },
-          // 2. PMTiles Context Buildings Fill & Outline (Vibrant Terracotta / Orange matching Ref Image)
-          {
-            id: "context-buildings-fill",
-            type: "fill",
-            source: "pmtiles-buildings",
-            "source-layer": "building",
-            paint: {
-              "fill-color": "#ea580c",
-              "fill-opacity": 0.88,
-            },
-          },
-          {
-            id: "context-buildings-line",
-            type: "line",
-            source: "pmtiles-buildings",
-            "source-layer": "building",
-            paint: {
-              "line-color": "#ffffff",
-              "line-width": 1.1,
-              "line-opacity": 0.95,
-            },
-          },
-          // 3. PMTiles Context Roads Network (Cyan / Slate Casing matching Ref Image)
-          {
-            id: "context-roads-casing",
-            type: "line",
-            source: "pmtiles-roads",
-            "source-layer": "segment",
-            paint: {
-              "line-color": "#0284c7",
-              "line-width": 5.0,
-              "line-opacity": 0.8,
-            },
-          },
-          {
-            id: "context-roads-line",
-            type: "line",
-            source: "pmtiles-roads",
-            "source-layer": "segment",
-            paint: {
-              "line-color": "#f8fafc",
-              "line-width": 2.2,
-              "line-opacity": 0.95,
-            },
-          },
-        ],
-      },
-      center: initialCenter,
-      zoom: 17.5,
-      pitch: 20,
-    });
-
-    map.addControl(new maplibregl.NavigationControl({ showCompass: true }), "top-right");
-
-    map.on("error", (e) => {
-      console.warn("MapLibre event warning:", e.error?.message || e);
-    });
-
-    map.on("load", () => {
-      // Cadastral Data Sources (Image Footprint, All Statutory Parcels, Selected Statutory Legal, AI Ground Truth, Road ROW, Water Buffer, Dispute)
-      map.addSource("image-footprint", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("all-statutory-parcels", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("selected-legal-parcel", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("ai-ground-truth", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("road-row", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("water-buffer", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      map.addSource("dispute-layer", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-      });
-
-      // 0. Uploaded Drone Image Sensor Footprint (Bright cyan/white dashed border)
-      map.addLayer({
-        id: "image-footprint-fill",
-        type: "fill",
-        source: "image-footprint",
-        paint: {
-          "fill-color": "#38bdf8",
-          "fill-opacity": 0.08,
-        },
-      });
-
-      map.addLayer({
-        id: "image-footprint-line",
-        type: "line",
-        source: "image-footprint",
-        paint: {
-          "line-color": "#38bdf8",
-          "line-width": 2.2,
-          "line-dasharray": [6, 4],
-          "line-opacity": 0.9,
-        },
-      });
-
-      // 1. All Statutory Parcels (Subtle background cadastre mesh)
-      map.addLayer({
-        id: "all-statutory-mesh-line",
-        type: "line",
-        source: "all-statutory-parcels",
-        paint: {
-          "line-color": "#00f0ff",
-          "line-width": 1.2,
-          "line-opacity": 0.4,
-          "line-dasharray": [3, 2],
-        },
-      });
-
-      // 2. Water Buffer 30m corridor (NGT Zone)
-      map.addLayer({
-        id: "water-buffer-fill",
-        type: "fill",
-        source: "water-buffer",
-        paint: {
-          "fill-color": "#06b6d4",
-          "fill-opacity": 0.25,
-        },
-      });
-
-      map.addLayer({
-        id: "water-buffer-line",
-        type: "line",
-        source: "water-buffer",
-        paint: {
-          "line-color": "#06b6d4",
-          "line-width": 1.8,
-          "line-dasharray": [4, 2],
-        },
-      });
-
-      // 3. Road ROW 15m Corridor (Hatched / Amber)
-      map.addLayer({
-        id: "road-row-fill",
-        type: "fill",
-        source: "road-row",
-        paint: {
-          "fill-color": "#f59e0b",
-          "fill-opacity": 0.22,
-        },
-      });
-
-      map.addLayer({
-        id: "road-row-line",
-        type: "line",
-        source: "road-row",
-        paint: {
-          "line-color": "#f59e0b",
-          "line-width": 2.2,
-          "line-dasharray": [3, 2],
-        },
-      });
-
-      // 4. Selected Statutory Legal Boundary (Bright Cyan dashed boundary with translucent glow)
-      map.addLayer({
-        id: "selected-legal-fill",
-        type: "fill",
-        source: "selected-legal-parcel",
-        paint: {
-          "fill-color": "#00f0ff",
-          "fill-opacity": 0.12,
-        },
-      });
-
-      map.addLayer({
-        id: "selected-legal-line",
-        type: "line",
-        source: "selected-legal-parcel",
-        paint: {
-          "line-color": "#00f0ff",
-          "line-width": 3,
-          "line-dasharray": [4, 3],
-        },
-      });
-
-      // 5. AI Ground Truth Boundary (Solid Emerald perimeter with translucent footprint highlight)
-      map.addLayer({
-        id: "ai-ground-truth-fill",
-        type: "fill",
-        source: "ai-ground-truth",
-        paint: {
-          "fill-color": "#10b981",
-          "fill-opacity": 0.15,
-        },
-      });
-
-      map.addLayer({
-        id: "ai-ground-truth-line",
-        type: "line",
-        source: "ai-ground-truth",
-        paint: {
-          "line-color": "#10b981",
-          "line-width": 3.2,
-        },
-      });
-
-      // 6. Disputed Parcel Highlight (Red Warning Mask)
-      map.addLayer({
-        id: "dispute-fill",
-        type: "fill",
-        source: "dispute-layer",
-        paint: {
-          "fill-color": "#ef4444",
-          "fill-opacity": 0.55,
-        },
-      });
-
-      map.addLayer({
-        id: "dispute-line",
-        type: "line",
-        source: "dispute-layer",
-        paint: {
-          "line-color": "#ff0033",
-          "line-width": 3.5,
-        },
-      });
-    });
-
-    mapRef.current = map;
-
-    return () => {
-      map.remove();
-      mapRef.current = null;
-    };
+    async function loadData() {
+      setIsLoadingRegistry(true);
+      const reg = await fetchAdminHierarchyIndexed();
+      setRegistry(reg);
+      setIsLoadingRegistry(false);
+    }
+    loadData();
   }, []);
 
-  // Update map data when selected Khasra or datasets change
+  // Compute Strict Cascading Options
+  const stateOptions = useMemo(() => {
+    if (!registry) return [];
+    return getStateList(registry);
+  }, [registry]);
+
+  const districtOptions = useMemo(() => {
+    if (!registry || !selectedState) return [];
+    return getDistrictsForState(registry, selectedState);
+  }, [registry, selectedState]);
+
+  const subdistrictOptions = useMemo(() => {
+    if (!registry || !selectedDistrict) return [];
+    return getSubdistrictsForDistrict(registry, selectedDistrict);
+  }, [registry, selectedDistrict]);
+
+  const villageOptions = useMemo(() => {
+    if (!registry || !selectedSubdistrict) return [];
+    return getVillagesForSubdistrict(registry, selectedSubdistrict);
+  }, [registry, selectedSubdistrict]);
+
+  // Synchronize with URL search params on mount or param change
   useEffect(() => {
-    if (!mapRef.current) return;
-    const map = mapRef.current;
+    if (!registry) return;
+    const qState = searchParams?.get("state") || "";
+    const qDistrict = searchParams?.get("district") || "";
+    const qTaluka = searchParams?.get("taluka") || searchParams?.get("subdistrict") || "";
+    const qVillage = searchParams?.get("village") || "";
 
-    const updateMapSources = () => {
-      if (!map.isStyleLoaded()) return;
+    if (qState && !selectedState) {
+      const matchState = registry.states.find(
+        (s) => s.name.toUpperCase() === qState.toUpperCase() || s.code === qState
+      );
+      if (matchState) {
+        setSelectedState(matchState);
 
-      // 0. Update Uploaded Drone Image Sensor Footprint
-      let footprintFeature: GeoJSONFeature | null = null;
-      let targetBounds: [number, number, number, number] | null = null;
+        if (qDistrict) {
+          const districts = registry.districtsByState[matchState.code] || [];
+          const matchDist = districts.find(
+            (d) => d.name.toUpperCase() === qDistrict.toUpperCase() || d.code === qDistrict
+          );
+          if (matchDist) {
+            setSelectedDistrict(matchDist);
 
-      if (currentSurveyRecord?.image?.footprint) {
-        footprintFeature = currentSurveyRecord.image.footprint;
-        if (currentSurveyRecord.image.bounds) {
-          targetBounds = currentSurveyRecord.image.bounds;
-        }
-      } else if (selectedLegalFeature) {
-        footprintFeature = deriveImageFootprint(selectedLegalFeature, selectedKhasraId);
-      }
+            if (qTaluka) {
+              const subs = registry.subdistrictsByDistrict[matchDist.code] || [];
+              const matchSub = subs.find(
+                (s) => s.name.toUpperCase() === qTaluka.toUpperCase() || s.code === qTaluka
+              );
+              if (matchSub) {
+                setSelectedSubdistrict(matchSub);
 
-      if (footprintFeature) {
-        const footprintSource = map.getSource("image-footprint") as maplibregl.GeoJSONSource;
-        if (footprintSource) {
-          footprintSource.setData({
-            type: "FeatureCollection",
-            features: [footprintFeature],
-          } as any);
-        }
-      }
-
-      // 1. Update All Statutory Parcels (Full Village Cadastre Mesh)
-      if (allParcelsGeoJSON) {
-        const allSource = map.getSource("all-statutory-parcels") as maplibregl.GeoJSONSource;
-        if (allSource) {
-          allSource.setData(allParcelsGeoJSON as any);
-        }
-      }
-
-      // 2. Update Selected Legal Parcel
-      if (selectedLegalFeature) {
-        const legalSource = map.getSource("selected-legal-parcel") as maplibregl.GeoJSONSource;
-        if (legalSource) {
-          legalSource.setData({
-            type: "FeatureCollection",
-            features: [selectedLegalFeature],
-          } as any);
+                if (qVillage) {
+                  const vils = registry.villagesBySubdistrict[matchSub.code] || [];
+                  const matchVil = vils.find(
+                    (v) => v.name.toUpperCase() === qVillage.toUpperCase() || v.code === qVillage
+                  );
+                  if (matchVil) {
+                    setSelectedVillage(matchVil);
+                  }
+                }
+              }
+            }
+          }
         }
       }
+    }
+  }, [registry, searchParams, selectedState]);
 
-      // Camera Fitting: Fit directly to the Uploaded Drone Image Bounds / Footprint
-      if (targetBounds) {
-        map.fitBounds(
-          [
-            [targetBounds[0], targetBounds[1]],
-            [targetBounds[2], targetBounds[3]],
+  // Update Active Cadastral Config when State changes
+  useEffect(() => {
+    if (!selectedState) {
+      setActiveCadastralConfig(null);
+      return;
+    }
+    const norm = selectedState.name.toUpperCase().trim();
+    if (CADASTRAL_DATASETS[norm]) {
+      setActiveCadastralConfig(CADASTRAL_DATASETS[norm]);
+    } else {
+      setActiveCadastralConfig(null);
+    }
+  }, [selectedState]);
+
+  // Initialize MapLibre GL Map
+  useEffect(() => {
+    if (!isMounted || !mapContainerRef.current || mapRef.current) return;
+
+    try {
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: {
+          version: 8,
+          sources: {
+            "satellite-tiles": {
+              type: "raster",
+              tiles: [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+              ],
+              tileSize: 256,
+              attribution: "Esri World Imagery",
+              maxzoom: 19,
+            },
+            "india-states": {
+              type: "vector",
+              url: "pmtiles:///data/india_states.pmtiles",
+            },
+            "india-districts": {
+              type: "vector",
+              url: "pmtiles:///data/india_districts.pmtiles",
+            },
+            "lgd-subdistricts": {
+              type: "vector",
+              url: "pmtiles:///data/lgd_subdistricts.pmtiles",
+            },
+            "lgd-villages": {
+              type: "vector",
+              url: "pmtiles:///data/lgd_villages.pmtiles",
+            },
+            "mrsac-cadastrals": {
+              type: "vector",
+              url: "pmtiles:///data/MRSAC_Cadastrals.pmtiles",
+            },
+            "mpbhulekh-cadastrals": {
+              type: "vector",
+              url: "pmtiles:///data/MPBhulekh_MP_Plot_Cadastrals.pmtiles",
+            },
+            "mp-roads": {
+              type: "vector",
+              url: "pmtiles:///data/madhya_pradesh_roads.pmtiles",
+            },
+            "mp-buildings": {
+              type: "vector",
+              url: "pmtiles:///data/madhya_pradesh_buildings.pmtiles",
+            },
+            "mp-water": {
+              type: "vector",
+              url: "pmtiles:///data/madhya_pradesh_water.pmtiles",
+            },
+            "mp-waterways": {
+              type: "vector",
+              url: "pmtiles:///data/madhya_pradesh_waterways.pmtiles",
+            },
+          },
+          layers: [
+            // 1. Satellite Basemap
+            {
+              id: "satellite-layer",
+              type: "raster",
+              source: "satellite-tiles",
+              paint: { "raster-opacity": 0.95 },
+            },
+            // 2. OSM Water (Madhya Pradesh)
+            {
+              id: "mp-water-fill",
+              type: "fill",
+              source: "mp-water",
+              "source-layer": "water",
+              minzoom: 6,
+              paint: {
+                "fill-color": "#2563eb",
+                "fill-opacity": 0.35,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 3. OSM Waterways (Madhya Pradesh)
+            {
+              id: "mp-waterways-line",
+              type: "line",
+              source: "mp-waterways",
+              "source-layer": "waterways",
+              minzoom: 8,
+              paint: {
+                "line-color": "#38bdf8",
+                "line-width": [
+                  "interpolate",
+                  ["linear"],
+                  ["zoom"],
+                  8, 0.5,
+                  12, 1.2,
+                  15, 2.5
+                ],
+                "line-opacity": 0.8,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 4. OSM Roads (Madhya Pradesh)
+            {
+              id: "mp-roads-line",
+              type: "line",
+              source: "mp-roads",
+              "source-layer": "roads",
+              minzoom: 6,
+              paint: {
+                "line-color": "#f59e0b",
+                "line-width": [
+                  "interpolate",
+                  ["linear"],
+                  ["zoom"],
+                  6, 0.4,
+                  10, 1,
+                  13, 2,
+                  15, 3
+                ],
+                "line-opacity": 0.65,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 5. OSM Buildings (Madhya Pradesh)
+            {
+              id: "mp-buildings-fill",
+              type: "fill",
+              source: "mp-buildings",
+              "source-layer": "buildings",
+              minzoom: 12,
+              paint: {
+                "fill-color": "#ef4444",
+                "fill-opacity": 0.35,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            {
+              id: "mp-buildings-line",
+              type: "line",
+              source: "mp-buildings",
+              "source-layer": "buildings",
+              minzoom: 12,
+              paint: {
+                "line-color": "#f87171",
+                "line-width": 0.8,
+                "line-opacity": 0.85,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 2. State Boundaries
+            {
+              id: "admin-state-fill",
+              type: "fill",
+              source: "india-states",
+              "source-layer": "LGD_States",
+              paint: {
+                "fill-color": "#38bdf8",
+                "fill-opacity": 0.02,
+              },
+            },
+            {
+              id: "admin-state-line",
+              type: "line",
+              source: "india-states",
+              "source-layer": "LGD_States",
+              paint: {
+                "line-color": "#38bdf8",
+                "line-width": 1.5,
+                "line-opacity": 0.4,
+              },
+            },
+            // 3. District Boundaries
+            {
+              id: "admin-district-line",
+              type: "line",
+              source: "india-districts",
+              "source-layer": "LGD_Districts",
+              minzoom: 5,
+              paint: {
+                "line-color": "#818cf8",
+                "line-width": 1.2,
+                "line-opacity": 0.5,
+                "line-dasharray": [2, 1],
+              },
+            },
+            // 4. Subdistricts / Talukas
+            {
+              id: "admin-subdistrict-line",
+              type: "line",
+              source: "lgd-subdistricts",
+              "source-layer": "LGD_Subdistricts",
+              minzoom: 8,
+              paint: {
+                "line-color": "#a78bfa",
+                "line-width": 1,
+                "line-opacity": 0.5,
+              },
+            },
+            // 5. Villages Boundaries
+            {
+              id: "admin-village-fill",
+              type: "fill",
+              source: "lgd-villages",
+              "source-layer": "LGD_Villages",
+              minzoom: 10,
+              paint: {
+                "fill-color": "#06b6d4",
+                "fill-opacity": 0.05,
+              },
+            },
+            {
+              id: "admin-village-line",
+              type: "line",
+              source: "lgd-villages",
+              "source-layer": "LGD_Villages",
+              minzoom: 10,
+              paint: {
+                "line-color": "#06b6d4",
+                "line-width": 1.5,
+                "line-opacity": 0.7,
+              },
+            },
+            // 6. Selected Village Highlight Boundary (Filtered by vilcode11 code)
+            {
+              id: "selected-village-line",
+              type: "line",
+              source: "lgd-villages",
+              "source-layer": "LGD_Villages",
+              paint: {
+                "line-color": "#f59e0b",
+                "line-width": 3,
+                "line-opacity": 0.9,
+              },
+              filter: ["==", ["get", "vilcode11"], "__NONE__"],
+            },
+            // 7. Maharashtra Cadastrals
+            {
+              id: "cadastral-mrsac-fill",
+              type: "fill",
+              source: "mrsac-cadastrals",
+              "source-layer": "MRSAC_Cadastrals",
+              minzoom: 11,
+              paint: {
+                "fill-color": "#10b981",
+                "fill-opacity": 0.25,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            {
+              id: "cadastral-mrsac-line",
+              type: "line",
+              source: "mrsac-cadastrals",
+              "source-layer": "MRSAC_Cadastrals",
+              minzoom: 11,
+              paint: {
+                "line-color": "#34d399",
+                "line-width": 1.2,
+                "line-opacity": 0.85,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 8. MPBhulekh Cadastrals
+            {
+              id: "cadastral-mpbhulekh-fill",
+              type: "fill",
+              source: "mpbhulekh-cadastrals",
+              "source-layer": "MPBhulekh_MP_Plot_Cadastrals",
+              minzoom: 11,
+              paint: {
+                "fill-color": "#06b6d4",
+                "fill-opacity": 0.25,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            {
+              id: "cadastral-mpbhulekh-line",
+              type: "line",
+              source: "mpbhulekh-cadastrals",
+              "source-layer": "MPBhulekh_MP_Plot_Cadastrals",
+              minzoom: 11,
+              paint: {
+                "line-color": "#22d3ee",
+                "line-width": 1.2,
+                "line-opacity": 0.85,
+              },
+              layout: {
+                visibility: "none",
+              },
+            },
+            // 9. Selected Parcel Highlight Layers
+            {
+              id: "selected-parcel-mrsac-fill",
+              type: "fill",
+              source: "mrsac-cadastrals",
+              "source-layer": "MRSAC_Cadastrals",
+              paint: {
+                "fill-color": "#facc15",
+                "fill-opacity": 0.45,
+              },
+              filter: ["==", ["get", "OBJECTID"], -999999],
+            },
+            {
+              id: "selected-parcel-mrsac-line",
+              type: "line",
+              source: "mrsac-cadastrals",
+              "source-layer": "MRSAC_Cadastrals",
+              paint: {
+                "line-color": "#facc15",
+                "line-width": 3,
+                "line-opacity": 1.0,
+              },
+              filter: ["==", ["get", "OBJECTID"], -999999],
+            },
+            {
+              id: "selected-parcel-mp-fill",
+              type: "fill",
+              source: "mpbhulekh-cadastrals",
+              "source-layer": "MPBhulekh_MP_Plot_Cadastrals",
+              paint: {
+                "fill-color": "#facc15",
+                "fill-opacity": 0.45,
+              },
+              filter: ["==", ["get", "parcel_id"], "__none__"],
+            },
+            {
+              id: "selected-parcel-mp-line",
+              type: "line",
+              source: "mpbhulekh-cadastrals",
+              "source-layer": "MPBhulekh_MP_Plot_Cadastrals",
+              paint: {
+                "line-color": "#facc15",
+                "line-width": 3,
+                "line-opacity": 1.0,
+              },
+              filter: ["==", ["get", "parcel_id"], "__none__"],
+            },
           ],
-          { padding: 80, maxZoom: 17.8, duration: 1000 }
-        );
-      } else if (footprintFeature) {
-        const bbox = getWgs84Bbox({ type: "FeatureCollection", features: [footprintFeature] });
-        map.fitBounds(
-          [
-            [bbox[0], bbox[1]],
-            [bbox[2], bbox[3]],
-          ],
-          { padding: 80, maxZoom: 17.8, duration: 1000 }
-        );
-      } else if (selectedLegalFeature) {
-        const bbox = getWgs84Bbox({ type: "FeatureCollection", features: [selectedLegalFeature] });
-        map.fitBounds(
-          [
-            [bbox[0], bbox[1]],
-            [bbox[2], bbox[3]],
-          ],
-          { padding: 80, maxZoom: 17.8, duration: 1000 }
-        );
-      }
+        },
+        center: [78.9629, 20.5937],
+        zoom: 4.5,
+        attributionControl: false,
+      });
 
-      // 3. Update AI Ground Truth
-      if (selectedAiFeature) {
-        const aiSource = map.getSource("ai-ground-truth") as maplibregl.GeoJSONSource;
-        if (aiSource) {
-          aiSource.setData({
-            type: "FeatureCollection",
-            features: [selectedAiFeature],
-          } as any);
+      map.addControl(new maplibregl.NavigationControl({ showCompass: true, showZoom: true }), "top-right");
+      map.addControl(new maplibregl.ScaleControl({ maxWidth: 100, unit: "metric" }), "bottom-left");
+
+      map.on("load", () => {
+        setMapStatus("CONNECTED");
+      });
+
+      map.on("error", (e) => {
+        console.warn("[TerraMap] Map warning:", e);
+      });
+
+      // Clickable layers and priority definition
+      const clickableLayers = [
+        "cadastral-mpbhulekh-fill",
+        "cadastral-mrsac-fill",
+        "mp-buildings-fill",
+        "mp-buildings-line",
+        "mp-roads-line",
+        "mp-waterways-line",
+        "mp-water-fill",
+      ];
+
+      const priorityOrder = [
+        "cadastral-mpbhulekh-fill",
+        "cadastral-mrsac-fill",
+        "mp-buildings-fill",
+        "mp-buildings-line",
+        "mp-roads-line",
+        "mp-waterways-line",
+        "mp-water-fill",
+      ];
+
+      // Unified Interactive Click Handling across Parcels & Physical OSM Layers
+      map.on("click", (e) => {
+        const availableLayers = clickableLayers.filter((id) => !!map.getLayer(id));
+        const features = map.queryRenderedFeatures(e.point, { layers: availableLayers });
+        if (!features || features.length === 0) return;
+
+        // Sort by priority order: Parcel -> Building -> Road -> Waterway -> Water
+        const sorted = [...features].sort((a, b) => {
+          const idxA = priorityOrder.indexOf(a.layer?.id || "");
+          const idxB = priorityOrder.indexOf(b.layer?.id || "");
+          return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+        });
+
+        const winningFeature = sorted[0];
+        const layerId = winningFeature.layer?.id;
+        const props = (winningFeature.properties || {}) as Record<string, unknown>;
+
+        if (layerId === "cadastral-mpbhulekh-fill") {
+          setSelectedParcel({
+            source: "Madhya Pradesh",
+            properties: props,
+            layerId: "cadastral-mpbhulekh-fill",
+            featureType: "PARCEL",
+            title: "PARCEL INSPECTION",
+            geometry: winningFeature.geometry,
+          });
+
+          const parcelId = props.parcel_id;
+          if (parcelId) {
+            map.setFilter("selected-parcel-mp-fill", ["==", ["get", "parcel_id"], String(parcelId)]);
+            map.setFilter("selected-parcel-mp-line", ["==", ["get", "parcel_id"], String(parcelId)]);
+          }
+        } else if (layerId === "cadastral-mrsac-fill") {
+          setSelectedParcel({
+            source: "Maharashtra",
+            properties: props,
+            layerId: "cadastral-mrsac-fill",
+            featureType: "PARCEL",
+            title: "PARCEL INSPECTION",
+            geometry: winningFeature.geometry,
+          });
+
+          const objId = props.OBJECTID;
+          if (objId !== undefined && objId !== null) {
+            map.setFilter("selected-parcel-mrsac-fill", ["==", ["get", "OBJECTID"], Number(objId)]);
+            map.setFilter("selected-parcel-mrsac-line", ["==", ["get", "OBJECTID"], Number(objId)]);
+          }
+        } else if (layerId === "mp-buildings-fill" || layerId === "mp-buildings-line") {
+          setSelectedParcel({
+            source: "OSM Madhya Pradesh",
+            properties: props,
+            layerId: "mp-buildings-fill",
+            featureType: "BUILDING",
+            title: "BUILDING INFORMATION",
+          });
+        } else if (layerId === "mp-roads-line") {
+          setSelectedParcel({
+            source: "OSM Madhya Pradesh",
+            properties: props,
+            layerId: "mp-roads-line",
+            featureType: "ROAD",
+            title: "ROAD INFORMATION",
+          });
+        } else if (layerId === "mp-waterways-line") {
+          setSelectedParcel({
+            source: "OSM Madhya Pradesh",
+            properties: props,
+            layerId: "mp-waterways-line",
+            featureType: "WATERWAY",
+            title: "WATERWAY INFORMATION",
+          });
+        } else if (layerId === "mp-water-fill") {
+          setSelectedParcel({
+            source: "OSM Madhya Pradesh",
+            properties: props,
+            layerId: "mp-water-fill",
+            featureType: "WATER",
+            title: "WATER INFORMATION",
+          });
         }
+      });
+
+      const setPointer = () => { map.getCanvas().style.cursor = "pointer"; };
+      const resetPointer = () => { map.getCanvas().style.cursor = ""; };
+
+      clickableLayers.forEach((layerId) => {
+        map.on("mouseenter", layerId, setPointer);
+        map.on("mouseleave", layerId, resetPointer);
+      });
+
+      mapRef.current = map;
+      if (typeof window !== "undefined") {
+        (window as any)._map = map;
       }
+    } catch (err) {
+      console.error("[TerraMap] MapLibre initialization failed:", err);
+      setMapStatus("ERROR");
+    }
 
-      // 4. Update Infrastructure Violations (Road ROW / Water Buffer)
-      const roadRowSource = map.getSource("road-row") as maplibregl.GeoJSONSource;
-      const waterBufferSource = map.getSource("water-buffer") as maplibregl.GeoJSONSource;
-
-      if (roadRowSource) {
-        if (activeRoR.alertType === "ROW_OVERLAP" && selectedLegalFeature) {
-          roadRowSource.setData({
-            type: "FeatureCollection",
-            features: [selectedLegalFeature],
-          } as any);
-        } else {
-          roadRowSource.setData({ type: "FeatureCollection", features: [] } as any);
-        }
-      }
-
-      if (waterBufferSource) {
-        if (activeRoR.alertType === "WATER_BUFFER" && selectedLegalFeature) {
-          waterBufferSource.setData({
-            type: "FeatureCollection",
-            features: [selectedLegalFeature],
-          } as any);
-        } else {
-          waterBufferSource.setData({ type: "FeatureCollection", features: [] } as any);
-        }
-      }
-
-      // 5. Update Disputed State
-      const disputeSource = map.getSource("dispute-layer") as maplibregl.GeoJSONSource;
-      if (disputeSource) {
-        if (isDisputed && selectedLegalFeature) {
-          disputeSource.setData({
-            type: "FeatureCollection",
-            features: [selectedLegalFeature],
-          } as any);
-        } else {
-          disputeSource.setData({ type: "FeatureCollection", features: [] } as any);
-        }
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
       }
     };
+  }, [isMounted]);
 
-    if (map.isStyleLoaded()) {
-      updateMapSources();
+  // Handle State Change: Visibility and Layer Switch
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+
+    const normState = (selectedState?.name || "").toUpperCase().trim();
+    const isMP = normState === "MADHYA PRADESH";
+
+    // Toggle MP physical reference layers (Water, Waterways, Roads, Buildings)
+    const mpPhysicalLayers = [
+      "mp-water-fill",
+      "mp-waterways-line",
+      "mp-roads-line",
+      "mp-buildings-fill",
+      "mp-buildings-line",
+    ];
+
+    mpPhysicalLayers.forEach((layerId) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, "visibility", isMP ? "visible" : "none");
+      }
+    });
+
+    if (normState === "MAHARASHTRA") {
+      map.setLayoutProperty("cadastral-mrsac-fill", "visibility", "visible");
+      map.setLayoutProperty("cadastral-mrsac-line", "visibility", "visible");
+      map.setLayoutProperty("cadastral-mpbhulekh-fill", "visibility", "none");
+      map.setLayoutProperty("cadastral-mpbhulekh-line", "visibility", "none");
+
+      const config = CADASTRAL_DATASETS.MAHARASHTRA;
+      map.fitBounds(config.bounds, { padding: 40, duration: 1500 });
+    } else if (isMP) {
+      map.setLayoutProperty("cadastral-mrsac-fill", "visibility", "none");
+      map.setLayoutProperty("cadastral-mrsac-line", "visibility", "none");
+      map.setLayoutProperty("cadastral-mpbhulekh-fill", "visibility", "visible");
+      map.setLayoutProperty("cadastral-mpbhulekh-line", "visibility", "visible");
+
+      const config = CADASTRAL_DATASETS["MADHYA PRADESH"];
+      map.fitBounds(config.bounds, { padding: 40, duration: 1500 });
     } else {
-      map.once("load", updateMapSources);
+      if (map.getLayer("cadastral-mrsac-fill")) {
+        map.setLayoutProperty("cadastral-mrsac-fill", "visibility", "none");
+        map.setLayoutProperty("cadastral-mrsac-line", "visibility", "none");
+      }
+      if (map.getLayer("cadastral-mpbhulekh-fill")) {
+        map.setLayoutProperty("cadastral-mpbhulekh-fill", "visibility", "none");
+        map.setLayoutProperty("cadastral-mpbhulekh-line", "visibility", "none");
+      }
     }
-  }, [
-    allParcelsGeoJSON,
-    selectedLegalFeature,
-    selectedAiFeature,
-    currentSurveyRecord,
-    isDisputed,
-    activeRoR,
-    selectedKhasraId,
-  ]);
+  }, [selectedState]);
 
-  // Flag Boundary Dispute Handler
-  const handleFlagDispute = useCallback(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("flagged_khasra_id", selectedKhasraId);
-      setFlaggedKhasraId(selectedKhasraId);
+  // Handle Village Zoom & Code-Based Cadastral Filtering
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded() || !selectedVillage) return;
+
+    const normState = (selectedState?.name || "").toUpperCase().trim();
+
+    // Highlight selected village boundary using verified code
+    map.setFilter("selected-village-line", ["==", ["get", "vilcode11"], selectedVillage.code]);
+
+    if (normState === "MAHARASHTRA") {
+      // Filter MRSAC cadastrals by subdistrict code / village code
+      if (selectedVillage.code) {
+        map.setFilter("cadastral-mrsac-fill", [
+          "any",
+          ["==", ["get", "VINCODE"], selectedVillage.code],
+          ["==", ["get", "VIL_NAME"], selectedVillage.name],
+        ]);
+        map.setFilter("cadastral-mrsac-line", [
+          "any",
+          ["==", ["get", "VINCODE"], selectedVillage.code],
+          ["==", ["get", "VIL_NAME"], selectedVillage.name],
+        ]);
+      }
+
+      // Smooth camera fly-to using precomputed village centroid
+      getVillageCentroid(selectedVillage.code).then((centroid) => {
+        console.log("[TerraMap] Village selected:", selectedVillage);
+        console.log("[TerraMap] Village centroid:", centroid);
+        if (centroid && mapRef.current) {
+          const m = mapRef.current;
+          m.flyTo({
+            center: centroid,
+            zoom: 14.5,
+            speed: 1.2,
+          });
+          console.log("[TerraMap] Map zoom after village selection flyTo call:", m.getZoom());
+          console.log("[TerraMap] Map center:", m.getCenter());
+
+          m.once("moveend", () => {
+            console.log("[TerraMap] Final village zoom:", m.getZoom());
+            console.log(
+              "[TerraMap] Building fill visibility:",
+              m.getLayoutProperty("mp-buildings-fill", "visibility")
+            );
+            console.log(
+              "[TerraMap] Building line visibility:",
+              m.getLayoutProperty("mp-buildings-line", "visibility")
+            );
+          });
+        }
+      });
+    } else if (normState === "MADHYA PRADESH") {
+      if (selectedVillage.code) {
+        map.setFilter("cadastral-mpbhulekh-fill", [
+          "any",
+          ["==", ["get", "village_lgd_code"], selectedVillage.code],
+          ["==", ["get", "village_name_en"], selectedVillage.name],
+        ]);
+        map.setFilter("cadastral-mpbhulekh-line", [
+          "any",
+          ["==", ["get", "village_lgd_code"], selectedVillage.code],
+          ["==", ["get", "village_name_en"], selectedVillage.name],
+        ]);
+      }
+
+      getVillageCentroid(selectedVillage.code).then((centroid) => {
+        if (centroid && mapRef.current) {
+          mapRef.current.flyTo({
+            center: centroid,
+            zoom: 14.5,
+            speed: 1.2,
+          });
+        }
+      });
+    }
+  }, [selectedVillage, selectedState]);
+
+  // Strict Cascading Dropdown Handlers with Reset Logic
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const match = stateOptions.find((s) => s.code === code) || null;
+
+    // Strict Parent-Child Reset
+    setSelectedState(match);
+    setSelectedDistrict(null);
+    setSelectedSubdistrict(null);
+    setSelectedVillage(null);
+    setSelectedParcel(null);
+
+    // Reset village highlight line
+    const map = mapRef.current;
+    if (map && map.isStyleLoaded() && map.getLayer("selected-village-line")) {
+      map.setFilter("selected-village-line", ["==", ["get", "vilcode11"], "__NONE__"]);
     }
 
-    setToastMessage(`Dispute successfully flagged for Khasra ${selectedKhasraId} (7-Day Notice Initiated)`);
+    const params = new URLSearchParams();
+    if (match) params.set("state", match.name);
+    router.replace(`/page2-reconcile?${params.toString()}`);
+  };
 
-    setTimeout(() => {
-      setToastMessage(null);
-      router.push("/page3-dispute");
-    }, 1400);
-  }, [selectedKhasraId, router]);
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const match = districtOptions.find((d) => d.code === code) || null;
+
+    // Strict Parent-Child Reset
+    setSelectedDistrict(match);
+    setSelectedSubdistrict(null);
+    setSelectedVillage(null);
+    setSelectedParcel(null);
+
+    const map = mapRef.current;
+    if (map && map.isStyleLoaded() && map.getLayer("selected-village-line")) {
+      map.setFilter("selected-village-line", ["==", ["get", "vilcode11"], "__NONE__"]);
+    }
+
+    const params = new URLSearchParams();
+    if (selectedState) params.set("state", selectedState.name);
+    if (match) params.set("district", match.name);
+    router.replace(`/page2-reconcile?${params.toString()}`);
+
+    // Zoom camera towards district centroid
+    if (match) {
+      getDistrictCentroid(match.code).then((centroid) => {
+        if (centroid && mapRef.current) {
+          mapRef.current.flyTo({ center: centroid, zoom: 9.5, speed: 1.2 });
+        }
+      });
+    }
+  };
+
+  const handleSubdistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const match = subdistrictOptions.find((s) => s.code === code) || null;
+
+    // Strict Parent-Child Reset
+    setSelectedSubdistrict(match);
+    setSelectedVillage(null);
+    setSelectedParcel(null);
+
+    const map = mapRef.current;
+    if (map && map.isStyleLoaded() && map.getLayer("selected-village-line")) {
+      map.setFilter("selected-village-line", ["==", ["get", "vilcode11"], "__NONE__"]);
+    }
+
+    const params = new URLSearchParams();
+    if (selectedState) params.set("state", selectedState.name);
+    if (selectedDistrict) params.set("district", selectedDistrict.name);
+    if (match) params.set("taluka", match.name);
+    router.replace(`/page2-reconcile?${params.toString()}`);
+
+    // Zoom camera towards subdistrict centroid
+    if (match) {
+      getSubdistrictCentroid(match.code).then((centroid) => {
+        if (centroid && mapRef.current) {
+          mapRef.current.flyTo({ center: centroid, zoom: 11.5, speed: 1.2 });
+        }
+      });
+    }
+  };
+
+  const handleVillageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    const match = villageOptions.find((v) => v.code === code) || null;
+
+    setSelectedVillage(match);
+    setSelectedParcel(null);
+
+    const params = new URLSearchParams();
+    if (selectedState) params.set("state", selectedState.name);
+    if (selectedDistrict) params.set("district", selectedDistrict.name);
+    if (selectedSubdistrict) params.set("taluka", selectedSubdistrict.name);
+    if (match) params.set("village", match.name);
+    router.replace(`/page2-reconcile?${params.toString()}`);
+  };
+
+  const subdistrictLabel = activeCadastralConfig?.subdistrictLabel || "Taluka / Tehsil";
+
+  const featureAttributes = useMemo(() => {
+    if (!selectedParcel) return [];
+
+    // Cadastral Parcel
+    if (!selectedParcel.featureType || selectedParcel.featureType === "PARCEL") {
+      if (!activeCadastralConfig) return [];
+      const p = selectedParcel.properties;
+      return activeCadastralConfig.displayFields
+        .filter((field) => p[field.key] !== undefined && p[field.key] !== null && String(p[field.key]).trim() !== "")
+        .map((field) => ({
+          key: field.key,
+          label: field.label,
+          value: String(p[field.key]),
+        }));
+    }
+
+    // Physical Features (Road, Building, Water, Waterway)
+    const p = selectedParcel.properties || {};
+    const parsedTags = parseOtherTags(p.other_tags);
+    const combined: Record<string, string> = {};
+
+    for (const [k, v] of Object.entries(p)) {
+      if (v !== undefined && v !== null && String(v).trim() !== "" && k !== "other_tags" && k !== "z_order") {
+        combined[k] = String(v);
+      }
+    }
+    for (const [k, v] of Object.entries(parsedTags)) {
+      if (v !== undefined && v !== null && String(v).trim() !== "" && !combined[k]) {
+        combined[k] = String(v);
+      }
+    }
+
+    const rows: { key: string; label: string; value: string }[] = [];
+
+    if (selectedParcel.featureType === "ROAD") {
+      rows.push({ key: "name", label: "Name", value: combined.name || "Unnamed Road" });
+      if (combined.highway) rows.push({ key: "highway", label: "Road Type", value: combined.highway });
+      if (combined.surface) rows.push({ key: "surface", label: "Surface", value: combined.surface });
+      if (combined.lanes) rows.push({ key: "lanes", label: "Lanes", value: combined.lanes });
+      if (combined.maxspeed) rows.push({ key: "maxspeed", label: "Speed Limit", value: combined.maxspeed });
+      if (combined.oneway) rows.push({ key: "oneway", label: "One Way", value: combined.oneway });
+      if (combined.bridge) rows.push({ key: "bridge", label: "Bridge", value: combined.bridge });
+      if (combined.tunnel) rows.push({ key: "tunnel", label: "Tunnel", value: combined.tunnel });
+      if (combined.access) rows.push({ key: "access", label: "Access", value: combined.access });
+      if (combined.ref) rows.push({ key: "ref", label: "Reference", value: combined.ref });
+      if (combined.osm_id) rows.push({ key: "osm_id", label: "OSM ID", value: combined.osm_id });
+      else if (combined.osm_way_id) rows.push({ key: "osm_way_id", label: "OSM ID", value: combined.osm_way_id });
+
+      const handled = new Set(["name", "highway", "surface", "lanes", "maxspeed", "oneway", "bridge", "tunnel", "access", "ref", "osm_id", "osm_way_id", "z_order", "other_tags"]);
+      for (const [k, v] of Object.entries(combined)) {
+        if (!handled.has(k)) {
+          rows.push({ key: k, label: formatPropertyName(k), value: v });
+        }
+      }
+    } else if (selectedParcel.featureType === "BUILDING") {
+      if (combined.building) rows.push({ key: "building", label: "Building Type", value: combined.building });
+      rows.push({ key: "name", label: "Name", value: combined.name || "—" });
+      if (combined["addr:housenumber"] || combined.housenumber) {
+        rows.push({ key: "housenumber", label: "House Number", value: combined["addr:housenumber"] || combined.housenumber });
+      }
+      if (combined["addr:street"] || combined.street) {
+        rows.push({ key: "street", label: "Street", value: combined["addr:street"] || combined.street });
+      }
+      if (combined["addr:city"] || combined.city) {
+        rows.push({ key: "city", label: "City", value: combined["addr:city"] || combined.city });
+      }
+      if (combined["addr:postcode"] || combined.postcode) {
+        rows.push({ key: "postcode", label: "Postcode", value: combined["addr:postcode"] || combined.postcode });
+      }
+      if (combined.amenity) rows.push({ key: "amenity", label: "Amenity", value: combined.amenity });
+      if (combined.osm_id) rows.push({ key: "osm_id", label: "OSM ID", value: combined.osm_id });
+      else if (combined.osm_way_id) rows.push({ key: "osm_way_id", label: "OSM ID", value: combined.osm_way_id });
+
+      const handled = new Set(["name", "building", "addr:housenumber", "housenumber", "addr:street", "street", "addr:city", "city", "addr:postcode", "postcode", "amenity", "osm_id", "osm_way_id", "z_order", "other_tags", "admin_level"]);
+      for (const [k, v] of Object.entries(combined)) {
+        if (!handled.has(k)) {
+          rows.push({ key: k, label: formatPropertyName(k), value: v });
+        }
+      }
+    } else if (selectedParcel.featureType === "WATER") {
+      rows.push({ key: "name", label: "Name", value: combined.name || "Unnamed Water Body" });
+      if (combined.water) rows.push({ key: "water", label: "Water Type", value: combined.water });
+      if (combined.natural) rows.push({ key: "natural", label: "Natural", value: combined.natural });
+      if (combined.waterway) rows.push({ key: "waterway", label: "Waterway", value: combined.waterway });
+      if (combined.osm_id) rows.push({ key: "osm_id", label: "OSM ID", value: combined.osm_id });
+      else if (combined.osm_way_id) rows.push({ key: "osm_way_id", label: "OSM ID", value: combined.osm_way_id });
+
+      const handled = new Set(["name", "water", "natural", "waterway", "osm_id", "osm_way_id", "z_order", "other_tags", "admin_level"]);
+      for (const [k, v] of Object.entries(combined)) {
+        if (!handled.has(k)) {
+          rows.push({ key: k, label: formatPropertyName(k), value: v });
+        }
+      }
+    } else if (selectedParcel.featureType === "WATERWAY") {
+      rows.push({ key: "name", label: "Name", value: combined.name || "Unnamed Waterway" });
+      if (combined.waterway) rows.push({ key: "waterway", label: "Waterway Type", value: combined.waterway });
+      if (combined.intermittent) rows.push({ key: "intermittent", label: "Intermittent", value: combined.intermittent });
+      if (combined.width) rows.push({ key: "width", label: "Width", value: combined.width });
+      if (combined.bridge) rows.push({ key: "bridge", label: "Bridge", value: combined.bridge });
+      if (combined.tunnel) rows.push({ key: "tunnel", label: "Tunnel", value: combined.tunnel });
+      if (combined.osm_id) rows.push({ key: "osm_id", label: "OSM ID", value: combined.osm_id });
+      else if (combined.osm_way_id) rows.push({ key: "osm_way_id", label: "OSM ID", value: combined.osm_way_id });
+
+      const handled = new Set(["name", "waterway", "intermittent", "width", "bridge", "tunnel", "osm_id", "osm_way_id", "z_order", "other_tags"]);
+      for (const [k, v] of Object.entries(combined)) {
+        if (!handled.has(k)) {
+          rows.push({ key: k, label: formatPropertyName(k), value: v });
+        }
+      }
+    }
+
+    return rows;
+  }, [selectedParcel, activeCadastralConfig]);
+
+  const dynamicHeaderTitle = useMemo(() => {
+    if (selectedVillage) {
+      return `${selectedState?.name} → ${selectedDistrict?.name} → ${selectedSubdistrict?.name} → ${selectedVillage.name}`;
+    }
+    if (selectedSubdistrict) {
+      return `${selectedState?.name} → ${selectedDistrict?.name} → ${selectedSubdistrict?.name}`;
+    }
+    if (selectedDistrict) {
+      return `${selectedState?.name} → ${selectedDistrict?.name}`;
+    }
+    if (selectedState) {
+      return `${selectedState.name} • Select Administrative Hierarchy`;
+    }
+    return "No administrative region selected";
+  }, [selectedState, selectedDistrict, selectedSubdistrict, selectedVillage]);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#070d1e] text-zinc-100 font-sans">
-      {/* 1. Mission-Mode Navigation Header */}
-      <header className="h-14 border-b border-zinc-800/80 bg-[#0b132b]/90 backdrop-blur-md px-6 flex items-center justify-between flex-shrink-0 z-30">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner">
-            <Scale className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold tracking-tight text-zinc-100 text-sm">TerraMap AI</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-semibold">
-                PAGE 2 • RECONCILIATION
-              </span>
-            </div>
-            <div className="text-[11px] text-zinc-400">
-              Pilot: <strong className="text-zinc-200">Bairagarh Kalan</strong> • Bhopal • Madhya Pradesh (LGD: {PILOT_HIERARCHY.lgdCode})
-            </div>
+    <div className="flex flex-col h-screen w-screen bg-[#070d1e] text-zinc-100 overflow-hidden select-none font-sans">
+      {/* 1. TOP HEADER & NAVIGATION */}
+      <header className="flex-shrink-0 h-14 border-b border-zinc-800 bg-[#091124]/90 backdrop-blur px-5 flex items-center justify-between z-30">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors">
+            <Compass className="w-5 h-5 text-cyan-400 animate-pulse" />
+            <span className="font-mono font-bold tracking-wider text-sm bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+              TERRAMAP AI
+            </span>
+          </Link>
+          <span className="text-zinc-700">/</span>
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-cyan-950/80 text-cyan-400 border border-cyan-800/60">
+              PAGE 2 • CADASTRAL RECONCILIATION
+            </span>
+            <span className="text-xs text-zinc-400 hidden lg:inline font-mono truncate max-w-md">
+              {dynamicHeaderTitle}
+            </span>
           </div>
         </div>
 
-        {/* Workflow Tab Navigation */}
-        <div className="flex items-center gap-1.5 bg-zinc-950/80 p-1 rounded-xl border border-zinc-800 text-xs font-mono">
+        {/* Workflow Steps Indicator */}
+        <div className="flex items-center gap-2 text-xs">
           <Link
             href="/"
-            className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 transition-colors"
+            className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors font-medium flex items-center gap-1.5"
           >
-            Page 1: Extraction
+            <span>1. Extraction</span>
           </Link>
-          <div className="px-3 py-1.5 rounded-lg bg-cyan-950 text-cyan-300 border border-cyan-800/80 font-bold shadow-sm flex items-center gap-1.5">
-            <span>Page 2: Reconciliation</span>
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+          <div className="px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-semibold flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+            <span>2. Reconciliation</span>
           </div>
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
           <Link
             href="/page3-dispute"
-            className="px-3 py-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900 transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 transition-colors font-medium flex items-center gap-1.5"
           >
-            <span>Page 3: Dispute</span>
+            <span>3. Dispute</span>
           </Link>
         </div>
       </header>
 
-      {/* 2. Administrative Hierarchy Ribbon */}
-      <div className="bg-[#0b132b]/95 border-b border-zinc-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 z-20 shadow-md">
-        <div className="flex items-center gap-2 flex-wrap text-xs">
-          <span className="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-1">
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
-            Admin Hierarchy:
-          </span>
-
-          {/* State */}
-          <div className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-2.5 py-1 text-zinc-300 font-medium">
-            <span className="text-zinc-500 font-mono text-[10px]">State:</span>
-            <span>{selectedState}</span>
-          </div>
-
-          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-
-          {/* District */}
-          <div className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-2.5 py-1 text-zinc-300 font-medium">
-            <span className="text-zinc-500 font-mono text-[10px]">District:</span>
-            <span>{selectedDistrict}</span>
-          </div>
-
-          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-
-          {/* Tehsil */}
-          <div className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-2.5 py-1 text-zinc-300 font-medium">
-            <span className="text-zinc-500 font-mono text-[10px]">Tehsil:</span>
-            <span>{selectedTehsil}</span>
-          </div>
-
-          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-
-          {/* Village */}
-          <div className="flex items-center gap-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-2.5 py-1 text-emerald-400 font-medium">
-            <span className="text-zinc-500 font-mono text-[10px]">Village:</span>
-            <span>{selectedVillage}</span>
-          </div>
-
-          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
-
-          {/* Survey / Khasra Selector */}
-          <div className="flex items-center gap-1.5 bg-zinc-950 border border-cyan-700/80 rounded-lg px-3 py-1 text-cyan-300 font-mono font-bold shadow-sm">
-            <span className="text-zinc-400 font-normal text-[10px]">Survey:</span>
+      {/* 2. ADMINISTRATIVE STRICT CASCADING BAR */}
+      <div className="flex-shrink-0 bg-[#0b1426] border-b border-zinc-800/80 px-5 py-2.5 flex flex-wrap items-center justify-between gap-3 z-20">
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          {/* State Selector */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-zinc-400 font-mono uppercase text-[10px] tracking-wider">State:</label>
             <select
-              value={selectedKhasraId}
-              onChange={(e) => setSelectedKhasraId(e.target.value)}
-              className="bg-transparent text-cyan-300 font-mono font-bold focus:outline-none cursor-pointer"
+              value={selectedState?.code || ""}
+              onChange={handleStateChange}
+              disabled={isLoadingRegistry}
+              className="bg-zinc-900/90 border border-zinc-700/80 text-zinc-100 rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none focus:border-cyan-500 hover:border-zinc-600 transition-colors cursor-pointer"
             >
-              {availableSurveys.map((k) => (
-                <option key={k} value={k} className="bg-zinc-900 text-zinc-100 font-mono">
-                  {k} {persistedRecords[k] ? "• Uploaded Drone Image" : ""}
+              <option value="">{isLoadingRegistry ? "Loading States..." : "Select State"}</option>
+              {stateOptions.map((st) => (
+                <option key={st.code} value={st.code}>
+                  {st.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+
+          {/* District Selector (Only districts strictly matching state code) */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-zinc-400 font-mono uppercase text-[10px] tracking-wider">District:</label>
+            <select
+              value={selectedDistrict?.code || ""}
+              onChange={handleDistrictChange}
+              disabled={!selectedState || districtOptions.length === 0}
+              className="bg-zinc-900/90 border border-zinc-700/80 text-zinc-100 rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none focus:border-cyan-500 hover:border-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              <option value="">
+                {selectedState ? `Select District (${districtOptions.length})` : "—"}
+              </option>
+              {districtOptions.map((dt) => (
+                <option key={dt.code} value={dt.code}>
+                  {dt.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+
+          {/* Taluka / Subdistrict Selector (Only subdistricts strictly matching district code) */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-zinc-400 font-mono uppercase text-[10px] tracking-wider">{subdistrictLabel}:</label>
+            <select
+              value={selectedSubdistrict?.code || ""}
+              onChange={handleSubdistrictChange}
+              disabled={!selectedDistrict || subdistrictOptions.length === 0}
+              className="bg-zinc-900/90 border border-zinc-700/80 text-zinc-100 rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none focus:border-cyan-500 hover:border-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              <option value="">
+                {selectedDistrict ? `Select ${subdistrictLabel} (${subdistrictOptions.length})` : "—"}
+              </option>
+              {subdistrictOptions.map((sub) => (
+                <option key={sub.code} value={sub.code}>
+                  {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+
+          {/* Village Selector (Only villages strictly matching subdistrict code) */}
+          <div className="flex items-center gap-1.5">
+            <label className="text-zinc-400 font-mono uppercase text-[10px] tracking-wider">Village:</label>
+            <select
+              value={selectedVillage?.code || ""}
+              onChange={handleVillageChange}
+              disabled={!selectedSubdistrict || villageOptions.length === 0}
+              className="bg-zinc-900/90 border border-zinc-700/80 text-zinc-100 rounded-lg px-2.5 py-1.5 text-xs font-mono focus:outline-none focus:border-cyan-500 hover:border-zinc-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+            >
+              <option value="">
+                {selectedSubdistrict ? `Select Village (${villageOptions.length})` : "—"}
+              </option>
+              {villageOptions.map((vil) => (
+                <option key={vil.code} value={vil.code}>
+                  {vil.name}
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Map Legend Pills */}
-        <div className="flex items-center gap-3 text-[11px] font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 border-t-2 border-dashed border-[#38bdf8]" />
-            <span className="text-sky-300">Image Footprint</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 border-t-2 border-dashed border-[#00f0ff]" />
-            <span className="text-cyan-300">Statutory Legal</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-[#10b981]" />
-            <span className="text-emerald-400">AI Ground Truth</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-[#f59e0b]/40 border border-[#f59e0b]" />
-            <span className="text-amber-400">Road ROW</span>
-          </div>
-          {isDisputed && (
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-[#ef4444] animate-pulse" />
-              <span className="text-rose-400 font-bold">Dispute</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 3. Main Body: Reconciliation Map + Inspection Drawer */}
-      <div className="flex-1 flex overflow-hidden relative">
-        {/* Map Container */}
-        <div className="flex-1 relative h-full w-full bg-[#070d1e]">
-          <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
-
-          {/* Map Overlay Badge */}
-          <div className="absolute top-4 left-4 z-10 bg-zinc-950/90 border border-zinc-800/90 backdrop-blur-md rounded-xl p-3 shadow-xl max-w-xs pointer-events-none">
-            <div className="flex items-center gap-2 mb-1">
-              <MapIcon className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-mono font-bold text-zinc-200">
-                LADM ISO 19152 RECONCILIATION
-              </span>
-            </div>
-            <div className="text-[11px] text-zinc-400 space-y-0.5">
-              <div>CRS: <strong className="text-zinc-300 font-mono">EPSG:32643 (UTM 43N)</strong></div>
-              <div>Basemap: <strong className="text-emerald-400 font-mono">Real Satellite Aerial Map</strong></div>
-              <div>Vector Overlay: <strong className="text-amber-400 font-mono">PMTiles Buildings & Roads</strong></div>
-              <div>Source: <strong className="text-cyan-400 font-mono">Page 1 Synced Cadastre</strong></div>
-            </div>
-          </div>
-        </div>
-
-        {/* 4. Property & CAD Inspection Drawer (Right Side) */}
-        <div className="w-96 bg-[#0b132b]/95 border-l border-zinc-800 p-5 flex flex-col gap-4 text-zinc-100 shadow-2xl backdrop-blur-xl overflow-y-auto z-20">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-mono font-bold tracking-wider text-zinc-400 uppercase">
-                Property / Cadastral Inspection
-              </span>
-            </div>
+        {/* Dataset Status Badge */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900/80 border border-zinc-800 text-[11px] font-mono text-zinc-400">
             <span
-              suppressHydrationWarning
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-emerald-400"
-            >
-              {isMounted ? activeRoR.associatedTileId : "00_00"}
+              className={`w-2 h-2 rounded-full ${
+                mapStatus === "CONNECTED"
+                  ? "bg-emerald-400 shadow-[0_0_8px_#34d399]"
+                  : mapStatus === "ERROR"
+                  ? "bg-rose-500 shadow-[0_0_8px_#f43f5e]"
+                  : "bg-amber-400 animate-ping"
+              }`}
+            />
+            <span>
+              PMTiles: {activeCadastralConfig ? activeCadastralConfig.sourceLayer : "Administrative"}
             </span>
           </div>
-
-          {/* Survey Information Card */}
-          <div className="bg-zinc-900/90 rounded-xl p-3.5 border border-zinc-800/90 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
-                Survey Information
-              </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
-                {currentSurveyRecord ? "UNDER RECONCILIATION" : "STATUTORY REGISTERED"}
-              </span>
-            </div>
-
-            <div className="text-base font-mono text-cyan-300 font-bold flex items-center justify-between">
-              <span>{activeRoR.khasraId}</span>
-              <span className="text-xs text-zinc-400 font-normal font-sans">{activeRoR.plotId}</span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-zinc-800/60 text-[11px]">
-              <div>
-                <span className="text-zinc-500">Village: </span>
-                <span className="text-zinc-200 font-medium">{selectedVillage}</span>
-              </div>
-              <div>
-                <span className="text-zinc-500">Tehsil: </span>
-                <span className="text-zinc-200 font-medium">{selectedTehsil}</span>
-              </div>
-              <div>
-                <span className="text-zinc-500">District: </span>
-                <span className="text-zinc-200 font-medium">{selectedDistrict}</span>
-              </div>
-              <div>
-                <span className="text-zinc-500">Image: </span>
-                <span className="text-emerald-400 font-mono font-medium truncate inline-block max-w-[100px]">
-                  {currentSurveyRecord?.image?.name || `${activeRoR.associatedTileId}.png`}
-                </span>
-              </div>
-            </div>
-
-            <div className="text-xs text-zinc-400 font-medium pt-1 border-t border-zinc-800/60">
-              Land Use: <strong className="text-zinc-200">{activeRoR.featureClass}</strong>
-            </div>
-          </div>
-
-          {/* Statutory Alerts if any */}
-          {activeRoR.alertType === "ROW_OVERLAP" && (
-            <div className="bg-amber-950/40 border border-amber-600/60 rounded-xl p-3 text-xs text-amber-200 space-y-1">
-              <div className="font-bold flex items-center gap-1.5 text-amber-400 font-mono text-[11px]">
-                <AlertTriangle className="w-4 h-4" />
-                ROAD ROW OVERLAP DETECTED
-              </div>
-              <p className="text-[11px] text-amber-200/90 leading-relaxed">
-                {activeRoR.alertDetails}
-              </p>
-            </div>
-          )}
-
-          {activeRoR.alertType === "WATER_BUFFER" && (
-            <div className="bg-cyan-950/40 border border-cyan-600/60 rounded-xl p-3 text-xs text-cyan-200 space-y-1">
-              <div className="font-bold flex items-center gap-1.5 text-cyan-400 font-mono text-[11px]">
-                <AlertTriangle className="w-4 h-4" />
-                WATER BUFFER CONFORMANCE ALERT
-              </div>
-              <p className="text-[11px] text-cyan-200/90 leading-relaxed">
-                {activeRoR.alertDetails}
-              </p>
-            </div>
-          )}
-
-          {isDisputed && (
-            <div className="bg-rose-950/50 border border-rose-600/80 rounded-xl p-3 text-xs text-rose-200 space-y-1 animate-pulse">
-              <div className="font-bold flex items-center gap-1.5 text-rose-400 font-mono text-[11px]">
-                <ShieldAlert className="w-4 h-4" />
-                FLAGGED BOUNDARY DISPUTE
-              </div>
-              <p className="text-[11px] text-rose-200/90 leading-relaxed">
-                Active notice period under MP Land Revenue Code. Registered in state dispute ledger.
-              </p>
-            </div>
-          )}
-
-          {/* Cadastral Conformance Metrics */}
-          <div className="bg-zinc-900/70 rounded-xl p-4 border border-zinc-800/90 space-y-3">
-            <div className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <Scale className="w-3.5 h-3.5 text-emerald-400" />
-              CADASTRAL CONFORMANCE
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-zinc-950/80 p-2.5 rounded-lg border border-zinc-800">
-                <div className="text-[10px] font-mono text-cyan-300">Legal Area</div>
-                <div className="text-sm font-bold font-mono text-zinc-100 mt-0.5">
-                  {legalArea.toLocaleString()} <span className="text-[10px] text-zinc-400 font-normal">m²</span>
-                </div>
-              </div>
-
-              <div className="bg-zinc-950/80 p-2.5 rounded-lg border border-zinc-800">
-                <div className="text-[10px] font-mono text-emerald-400">AI Ground Truth</div>
-                <div className="text-sm font-bold font-mono text-zinc-100 mt-0.5">
-                  {aiArea.toLocaleString()} <span className="text-[10px] text-zinc-400 font-normal">m²</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-zinc-800/80 text-xs font-mono">
-              <span className="text-zinc-400">Net Variance (Δ):</span>
-              <span
-                className={`font-bold text-sm ${
-                  netVariance > 0
-                    ? "text-rose-400"
-                    : netVariance < 0
-                    ? "text-amber-400"
-                    : "text-emerald-400"
-                }`}
-              >
-                {netVariance >= 0 ? `+${netVariance.toFixed(2)}` : netVariance.toFixed(2)} m²
-              </span>
-            </div>
-          </div>
-
-          {/* RoR / Record of Rights Details */}
-          <div className="space-y-2 text-xs">
-            <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
-              Statutory Record of Rights (RoR)
-            </div>
-
-            <div className="bg-zinc-900/40 rounded-xl p-3 border border-zinc-800/60 space-y-2 text-[11px]">
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Khata Number:</span>
-                <span className="font-mono text-zinc-200">{activeRoR.khataNumber}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Registered Co-owners:</span>
-                <span className="text-zinc-200 font-medium truncate max-w-[150px]">
-                  {activeRoR.coOwners.join(", ")}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Land Revenue:</span>
-                <span className="text-zinc-200">{activeRoR.annualRevenue}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Soil Class:</span>
-                <span className="text-zinc-200">{activeRoR.soilClassification}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Mortgage Status:</span>
-                <span
-                  className={`font-medium ${
-                    activeRoR.mortgageStatus === "Under Dispute"
-                      ? "text-rose-400"
-                      : activeRoR.mortgageStatus === "Mortgaged to Bank"
-                      ? "text-amber-400"
-                      : "text-emerald-400"
-                  }`}
-                >
-                  {activeRoR.mortgageStatus}
-                </span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-zinc-800">
-                <span className="text-zinc-500 font-mono">ULPIN:</span>
-                <span className="font-mono text-cyan-300 font-semibold">{activeRoR.ulpin}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Action: Flag Boundary Dispute Button */}
-          <div className="mt-auto pt-3 border-t border-zinc-800">
-            <button
-              onClick={handleFlagDispute}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-semibold text-xs shadow-lg shadow-rose-900/30 hover:shadow-rose-900/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <ShieldAlert className="w-4 h-4" />
-              <span>Flag Boundary Dispute (7-Day Notice Period) →</span>
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-rose-950 border border-rose-600 text-rose-100 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md flex items-center gap-3 animate-in slide-in-from-bottom-5">
-          <CheckCircle2 className="w-5 h-5 text-rose-400 flex-shrink-0" />
-          <span className="text-xs font-mono font-medium">{toastMessage}</span>
+      {/* 3. MAIN WORKSPACE: MAP (LEFT/CENTER) + INSPECTION DRAWER (RIGHT) */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* MAP CONTAINER */}
+        <div className="flex-1 h-full relative bg-[#020617]">
+          <div ref={mapContainerRef} className="w-full h-full" />
+
+          {/* Map Overlay Status Note */}
+          <div className="absolute top-3 left-3 pointer-events-none flex flex-col gap-2 z-10">
+            <div className="bg-[#0b1426]/90 backdrop-blur border border-zinc-800/90 rounded-lg p-2.5 shadow-xl text-xs font-mono max-w-sm pointer-events-auto">
+              <div className="flex items-center justify-between gap-2 text-zinc-400 border-b border-zinc-800/80 pb-1.5 mb-1.5">
+                <span className="flex items-center gap-1 text-cyan-400 font-semibold">
+                  <Layers className="w-3.5 h-3.5" /> Vector Layer Stream
+                </span>
+                <span className="text-[10px] text-zinc-500">MapLibre GL</span>
+              </div>
+              <p className="text-[11px] text-zinc-300 leading-relaxed">
+                {selectedVillage ? (
+                  <>
+                    Showing vector parcels for <strong className="text-cyan-300">{selectedVillage.name}</strong> (Code: {selectedVillage.code}). Click any parcel polygon to inspect official records.
+                  </>
+                ) : selectedState ? (
+                  <>
+                    Active state: <strong className="text-cyan-300">{selectedState.name}</strong>. Select district, {subdistrictLabel.toLowerCase()}, and village to display cadastral parcels.
+                  </>
+                ) : (
+                  "Select a State from the top bar to initialize official cadastral navigation."
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Floating Map Legend */}
+          <div className="absolute bottom-6 right-6 bg-[#091124]/90 backdrop-blur border border-zinc-800 rounded-lg p-3 text-xs font-mono shadow-2xl z-10">
+            <div className="text-zinc-400 font-bold mb-2 uppercase text-[10px] tracking-wider">Map Legend</div>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-red-400 bg-red-500/35" />
+                <span className="text-zinc-300 text-[11px]">OSM Buildings</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-amber-400 bg-amber-500/50" />
+                <span className="text-zinc-300 text-[11px]">OSM Roads</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-blue-500 bg-blue-600/35" />
+                <span className="text-zinc-300 text-[11px]">OSM Water</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-sky-400 bg-sky-400/60" />
+                <span className="text-zinc-300 text-[11px]">OSM Waterways</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-emerald-400 bg-emerald-500/30" />
+                <span className="text-zinc-300 text-[11px]">MRSAC Cadastral (MH)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-cyan-400 bg-cyan-500/30" />
+                <span className="text-zinc-300 text-[11px]">MPBhulekh Cadastral (MP)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-amber-400 bg-yellow-400/40" />
+                <span className="text-zinc-300 text-[11px]">Selected Parcel Highlight</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-sm border border-amber-500 bg-amber-500/20" />
+                <span className="text-zinc-300 text-[11px]">Selected Village Boundary</span>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* 4. RIGHT-SIDE INSPECTION DRAWER */}
+        <div className="w-96 flex-shrink-0 border-l border-zinc-800 bg-[#091124] flex flex-col h-full overflow-hidden z-20">
+          <div className="p-4 border-b border-zinc-800 flex items-center justify-between bg-[#0b1426]">
+            <div className="flex items-center gap-2">
+              {selectedParcel?.featureType === "ROAD" ? (
+                <Route className="w-4 h-4 text-amber-400" />
+              ) : selectedParcel?.featureType === "BUILDING" ? (
+                <Home className="w-4 h-4 text-red-400" />
+              ) : selectedParcel?.featureType === "WATER" ? (
+                <Droplets className="w-4 h-4 text-blue-400" />
+              ) : selectedParcel?.featureType === "WATERWAY" ? (
+                <Waves className="w-4 h-4 text-sky-400" />
+              ) : (
+                <Building2 className="w-4 h-4 text-cyan-400" />
+              )}
+              <h2 className="font-semibold text-sm tracking-wide text-zinc-100">
+                {selectedParcel?.title || "PARCEL INSPECTION"}
+              </h2>
+            </div>
+            {selectedParcel && (
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/80 text-amber-400 border border-amber-800/80">
+                  {selectedParcel.featureType || "PARCEL"}
+                </span>
+                <button
+                  onClick={() => setSelectedParcel(null)}
+                  className="p-1 hover:bg-zinc-800 rounded text-zinc-400 hover:text-zinc-200 transition-colors"
+                  title="Close panel"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {selectedParcel ? (
+              <>
+                {/* Jurisdictional / Geographic Context */}
+                {(!selectedParcel.featureType || selectedParcel.featureType === "PARCEL") ? (
+                  <div className="bg-zinc-900/80 border border-zinc-800/90 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-zinc-500">
+                      Jurisdictional Hierarchy
+                    </div>
+                    <div className="text-xs space-y-1 font-mono text-zinc-300">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">State:</span>
+                        <span className="text-cyan-300 font-semibold">{selectedState?.name || "—"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">District:</span>
+                        <span className="text-zinc-200">
+                          {selectedDistrict?.name ? `${selectedDistrict.name} (${selectedDistrict.code})` : "—"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">{subdistrictLabel}:</span>
+                        <span className="text-zinc-200">
+                          {selectedSubdistrict?.name ? `${selectedSubdistrict.name} (${selectedSubdistrict.code})` : "—"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Village:</span>
+                        <span className="text-emerald-300 font-semibold">
+                          {selectedVillage?.name ? `${selectedVillage.name} (${selectedVillage.code})` : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-zinc-900/80 border border-zinc-800/90 rounded-xl p-3.5 space-y-2">
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-zinc-500">
+                      Geographic Reference
+                    </div>
+                    <div className="text-xs space-y-1 font-mono text-zinc-300">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Region:</span>
+                        <span className="text-cyan-300 font-semibold">{selectedState?.name || "Madhya Pradesh"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Feature Class:</span>
+                        <span className="text-amber-300 font-semibold">{selectedParcel.featureType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Source:</span>
+                        <span className="text-zinc-200 font-mono text-[11px]">{selectedParcel.source}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Real Attributes from Vector PMTiles */}
+                <div className="bg-zinc-900/80 border border-zinc-800/90 rounded-xl p-3.5 space-y-3">
+                  <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+                    <span className="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                      <Database className="w-3.5 h-3.5 text-cyan-400" />
+                      {(!selectedParcel.featureType || selectedParcel.featureType === "PARCEL")
+                        ? "Authoritative PMTiles Attributes"
+                        : `${selectedParcel.featureType} Properties`}
+                    </span>
+                    <span className="text-[10px] font-mono text-zinc-500">
+                      {selectedParcel.source}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 font-mono text-xs">
+                    {featureAttributes.length > 0 ? (
+                      featureAttributes.map((attr) => (
+                        <div key={attr.key} className="flex justify-between items-start gap-2 border-b border-zinc-800/40 pb-1.5">
+                          <span className="text-zinc-400 text-[11px] flex-shrink-0">{attr.label}</span>
+                          <span className="text-zinc-100 font-medium text-right text-[11px] break-all">
+                            {attr.value}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-zinc-500 text-xs italic py-2">
+                        No additional attributes present in this vector tile.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* AI / Reference Status */}
+                {(!selectedParcel.featureType || selectedParcel.featureType === "PARCEL") ? (
+                  <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldAlert className="w-3.5 h-3.5 text-indigo-400" />
+                        AI Ground Truth Status
+                      </span>
+                    </div>
+                    <div className="text-xs font-mono text-zinc-400 bg-zinc-950/60 p-2.5 rounded-lg border border-zinc-800/60">
+                      <p className="text-[11px] text-zinc-400">
+                        AI Ground Truth: <span className="text-amber-400">Not available</span> for this remote cadastral coordinate.
+                      </p>
+                      <p className="text-[10px] text-zinc-500 mt-1">
+                        Upload drone orthophoto on Page 1 to reconcile AI vector extraction against this parcel boundary.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
+                      <span className="flex items-center gap-1.5">
+                        <Layers className="w-3.5 h-3.5 text-emerald-400" />
+                        Vector Layer Reference
+                      </span>
+                    </div>
+                    <div className="text-xs font-mono text-zinc-400 bg-zinc-950/60 p-2.5 rounded-lg border border-zinc-800/60">
+                      <p className="text-[11px] text-zinc-400">
+                        Physical reference layer active. Sourced directly from <span className="text-cyan-300">{selectedParcel.layerId}</span>.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3 text-zinc-500">
+                <div className="w-12 h-12 rounded-full bg-zinc-900/90 border border-zinc-800 flex items-center justify-center text-zinc-400">
+                  <Search className="w-6 h-6" />
+                </div>
+                <div className="font-semibold text-sm text-zinc-300">No feature selected</div>
+                <p className="text-xs text-zinc-400 max-w-xs leading-relaxed">
+                  Navigate through the administrative dropdowns above or zoom to a village, and click on any cadastral parcel, building, road, water body, or waterway to view detailed attributes.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Footer Action */}
+          <div className="p-3 border-t border-zinc-800 bg-[#070d1e] flex justify-between items-center text-xs">
+            <span className="text-zinc-500 font-mono text-[10px]">
+              Engine: PMTiles Vector + GeoJSON
+            </span>
+            <Link
+              href="/page3-dispute"
+              className="px-3 py-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/60 rounded-lg transition-colors font-mono font-semibold flex items-center gap-1 text-[11px]"
+            >
+              <span>Dispute Workflow</span>
+              <ChevronRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

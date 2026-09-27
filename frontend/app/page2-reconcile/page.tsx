@@ -2,8 +2,9 @@ import { Suspense } from "react";
 import { Page2Reconcile } from "../../components/Page2Reconcile";
 
 export const metadata = {
-  title: "Statutory Administrative Reconciliation | TerraMap AI",
-  description: "Reconciliation of Statutory Legal Cadastre against AI Ground-Truth Ortho Cadastre for Bairagarh Kalan, Bhopal.",
+  title: "Cadastral Reconciliation | TerraMap AI",
+  description:
+    "AI-powered cadastral mapping, parcel visualization, and administrative reconciliation using official geographic datasets.",
 };
 
 export default function Page() {

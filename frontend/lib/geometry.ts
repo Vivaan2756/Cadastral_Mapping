@@ -512,3 +512,42 @@ export function createLineFromSvgPoints(
     },
   };
 }
+
+/**
+ * Dynamically calculates the area and perimeter of a GeoJSON Feature
+ */
+export function calculateFeatureMetrics(feature: GeoJSONFeature, isPixelSpace: boolean = true) {
+  let area = 0;
+  let perimeter = 0;
+  
+  if (!feature || !feature.geometry) return { area: 0, perimeter: 0 };
+
+  const { type, coordinates } = feature.geometry;
+
+  if (type === "Polygon") {
+    area += calculatePolygonArea(coordinates[0], isPixelSpace);
+    for (let i = 1; i < coordinates.length; i++) {
+      area -= calculatePolygonArea(coordinates[i], isPixelSpace);
+    }
+    for (let i = 0; i < coordinates.length; i++) {
+      perimeter += calculatePerimeter(coordinates[i], isPixelSpace);
+    }
+  } else if (type === "MultiPolygon") {
+    for (const poly of coordinates) {
+      area += calculatePolygonArea(poly[0], isPixelSpace);
+      for (let i = 1; i < poly.length; i++) {
+        area -= calculatePolygonArea(poly[i], isPixelSpace);
+      }
+      for (let i = 0; i < poly.length; i++) {
+        perimeter += calculatePerimeter(poly[i], isPixelSpace);
+      }
+    }
+  } else if (type === "LineString") {
+    perimeter += calculatePerimeter(coordinates, isPixelSpace);
+  }
+
+  return {
+    area: Math.abs(area),
+    perimeter,
+  };
+}

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import * as turf from "@turf/turf";
 import {
   GeoJSONFeatureCollection,
   GeoJSONFeature,
@@ -10,7 +11,7 @@ import {
   isPixelSpaceGeoJSON,
 } from "../lib/geometry";
 import { EditorMode } from "./MappingToolbar";
-import { Image as ImageIcon, Sparkles, Activity } from "lucide-react";
+import { Image as ImageIcon, Sparkles, Activity, CheckCircle2 } from "lucide-react";
 
 interface MappingViewerProps {
   imageUrl: string;
@@ -22,44 +23,47 @@ interface MappingViewerProps {
   onSelectFeature: (featureId: string | null) => void;
   onGeoJsonChange: (newGeoJson: GeoJSONFeatureCollection) => void;
   onDrawingFinish?: () => void;
+  onEncroachingChange?: (ids: Set<string>) => void;
+  showGCP?: boolean;
 }
 
 const FEATURE_COLORS: Record<
   string,
-  { stroke: string; fill: string; strokeWidth: number; fillOpacity: number }
+  { stroke: string; fill: string; strokeWidth: number; fillOpacity: number; dashArray?: string }
 > = {
   parcel: {
-    stroke: "#10b981", // Emerald
+    stroke: "#059669",
     fill: "#10b981",
-    strokeWidth: 2,
-    fillOpacity: 0.15,
+    strokeWidth: 1.5,
+    fillOpacity: 0.12,
   },
   building: {
-    stroke: "#f59e0b", // Amber / Orange
-    fill: "#f59e0b",
-    strokeWidth: 2,
-    fillOpacity: 0.35,
+    stroke: "#ea580c",
+    fill: "#f97316",
+    strokeWidth: 1.8,
+    fillOpacity: 0.30,
   },
   road: {
-    stroke: "#38bdf8", // Sky Blue
-    fill: "#38bdf8",
-    strokeWidth: 3,
-    fillOpacity: 0.2,
+    stroke: "#facc15",
+    fill: "#facc15",
+    strokeWidth: 2.5,
+    fillOpacity: 0.15,
   },
   water: {
-    stroke: "#06b6d4", // Cyan
-    fill: "#06b6d4",
+    stroke: "#0284c7",
+    fill: "#0284c7",
     strokeWidth: 2,
-    fillOpacity: 0.4,
+    fillOpacity: 0.55,
   },
   encroachment: {
-    stroke: "#f43f5e", // Rose Red
-    fill: "#f43f5e",
-    strokeWidth: 2.5,
-    fillOpacity: 0.4,
+    stroke: "#b91c1c",
+    fill: "#ef4444",
+    strokeWidth: 3,
+    fillOpacity: 0.45,
+    dashArray: "4 2",
   },
   default: {
-    stroke: "#a855f7", // Purple
+    stroke: "#a855f7",
     fill: "#a855f7",
     strokeWidth: 2,
     fillOpacity: 0.2,
@@ -76,6 +80,8 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
   onSelectFeature,
   onGeoJsonChange,
   onDrawingFinish,
+  onEncroachingChange,
+  showGCP = true,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -110,6 +116,33 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
   // Keep static bounding box once calculated so coordinates stay fixed during editing
   const [initialBbox, setInitialBbox] = useState<BoundingBox | null>(null);
 
+  // Camera State for Dual Sync
+  const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
+  const [isDraggingMap, setIsDraggingMap] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    const scaleAdjust = e.deltaY > 0 ? 0.9 : 1.1;
+    setCamera(c => ({ ...c, scale: Math.max(0.1, Math.min(10, c.scale * scaleAdjust)) }));
+  }, []);
+
+  const handleMapMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 1 || mode === "select" || mode === "edit") {
+      setIsDraggingMap(true);
+      setDragStart({ x: e.clientX - camera.x, y: e.clientY - camera.y });
+    }
+  }, [mode, camera]);
+
+  const handleMapMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isDraggingMap) {
+      setCamera(c => ({ ...c, x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }));
+    }
+  }, [isDraggingMap, dragStart]);
+
+  const handleMapMouseUp = useCallback(() => {
+    setIsDraggingMap(false);
+  }, []);
+
   // Update raster dimensions when image loads
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
@@ -126,11 +159,109 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
     setInitialBbox(null);
   }, [geojson.tile_id]);
 
-  // Render SVG features
-  const { features: svgFeatures, bbox, isPixel } = useMemo(() => {
-    const res = geoJsonToSvg(geojson, viewWidth, viewHeight, initialBbox || undefined);
-    return res;
+  // Render SVG features and calculate encroachment overlaps
+  const { features: svgFeatures, bbox, isPixel, overlappingFeatureIds, overlapSvgFeatures } = useMemo(() => {
+
+    // Algorithmic Smoothing & Regularization
+    const layerOrder: Record<string, number> = {
+      parcel: 1,
+      water: 2,
+      road: 3,
+      building: 4,
+    };
+
+    let processedFeatures = geojson.features.map(f => {
+      if (f.properties?.type === 'road' && f.geometry) {
+        try {
+          // @ts-ignore
+          const smoothed = turf.polygonSmooth(turf.feature(f.geometry), { iterations: 3 });
+          return { ...f, geometry: smoothed.features[0].geometry } as GeoJSONFeature;
+        } catch (e) {
+          return f;
+        }
+      }
+      if (f.properties?.type === 'building' && f.geometry) {
+        try {
+          // @ts-ignore
+          const simplified = turf.simplify(turf.feature(f.geometry), { tolerance: 1.2, highQuality: true, mutate: false });
+          return { ...f, geometry: simplified.geometry } as GeoJSONFeature;
+        } catch (e) {
+          return f;
+        }
+      }
+      return f;
+    });
+
+    // Z-Index Sorting
+    processedFeatures.sort((a, b) => {
+      const typeA = a.properties?.type || 'parcel';
+      const typeB = b.properties?.type || 'parcel';
+      return (layerOrder[typeA] || 0) - (layerOrder[typeB] || 0);
+    });
+
+    const processedGeojson = { ...geojson, features: processedFeatures };
+    const res = geoJsonToSvg(processedGeojson, viewWidth, viewHeight, initialBbox || undefined);
+
+    // Calculate Encroachment Overlaps
+    const overlappingFeatureIds = new Set<string>();
+    const intersectionFeatures: any[] = [];
+
+    const polys = processedGeojson.features.filter(f =>
+      f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'
+    );
+
+    // O(N^2) audit for overlaps between structures
+    for (let i = 0; i < polys.length; i++) {
+      for (let j = i + 1; j < polys.length; j++) {
+        const f1 = polys[i];
+        const f2 = polys[j];
+
+        const type1 = f1.properties?.type || 'unknown';
+        const type2 = f2.properties?.type || 'unknown';
+
+        // Exclude Building vs Parcel overlap, since buildings natively sit inside parcels.
+        // We want to catch Building vs Building, Parcel vs Parcel, Road vs Road, Road vs Building, etc.
+        const isBuildingInsideParcel =
+          (type1 === 'parcel' && type2 === 'building') ||
+          (type1 === 'building' && type2 === 'parcel');
+
+        if (!isBuildingInsideParcel) {
+          try {
+            // @ts-ignore
+            const intersection = turf.intersect(turf.feature(f1.geometry), turf.feature(f2.geometry));
+            if (intersection) {
+              // Calculate overlap area (mocked metric if pixel space)
+              overlappingFeatureIds.add(f1.id as string);
+              overlappingFeatureIds.add(f2.id as string);
+              intersectionFeatures.push({
+                type: "Feature",
+                id: `overlap-${f1.id}-${f2.id}`,
+                properties: { type: "encroachment" },
+                geometry: intersection.geometry
+              });
+            }
+          } catch (e) {
+            // Ignore degenerate geometries from manual drawing
+          }
+        }
+      }
+    }
+
+    let overlapSvgFeatures: any[] = [];
+    if (intersectionFeatures.length > 0) {
+      const overlapFc = { type: "FeatureCollection", features: intersectionFeatures } as any;
+      const oRes = geoJsonToSvg(overlapFc, viewWidth, viewHeight, initialBbox || undefined);
+      overlapSvgFeatures = oRes.features;
+    }
+
+    return { ...res, overlappingFeatureIds, overlapSvgFeatures };
   }, [geojson, viewWidth, viewHeight, initialBbox]);
+
+  useEffect(() => {
+    if (onEncroachingChange) {
+      onEncroachingChange(overlappingFeatureIds);
+    }
+  }, [overlappingFeatureIds, onEncroachingChange]);
 
   useEffect(() => {
     if (!initialBbox && bbox) {
@@ -252,83 +383,96 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
     return svgFeatures.find((f) => f.id === selectedFeatureId) || null;
   }, [svgFeatures, selectedFeatureId]);
 
+  const [leftViewMode, setLeftViewMode] = useState<"RGB" | "DSM">("RGB");
+
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 w-full h-full flex items-center justify-center p-4 lg:p-6 overflow-hidden bg-zinc-950 select-none"
+      className="flex-1 min-h-0 grid grid-cols-2 gap-3 items-center justify-center h-full overflow-hidden select-none"
       onMouseUp={handleMouseUp}
     >
-      {/* Side-by-side Dual Workspaces container */}
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-6 max-w-full max-h-full">
-        {/* Left Side: Input Drone / Satellite Image */}
-        {inputImageUrl && (
-          <div className="flex flex-col items-center">
-            <div className="w-full flex items-center justify-between pb-2 px-1 text-xs font-mono">
-              <div className="flex items-center gap-1.5 text-zinc-300">
-                <ImageIcon className="w-3.5 h-3.5 text-sky-400" />
-                <span className="font-semibold">INPUT SATELLITE / DRONE</span>
-              </div>
-              <span className="text-[11px] text-zinc-500 truncate max-w-[150px]">
-                {inputImageName}
-              </span>
-            </div>
-
-            <div
-              className="relative rounded-xl overflow-hidden shadow-2xl border border-zinc-800/90 bg-zinc-900/50 flex items-center justify-center group"
-              style={{
-                aspectRatio: "1/1",
-                width: "min(72vh, 42vw, 512px)",
-                height: "min(72vh, 42vw, 512px)",
-              }}
+      {/* Left Side: Input Drone / Satellite Image */}
+      <div className="w-full h-full max-h-full flex flex-col bg-white rounded-2xl border border-slate-200 p-2 shadow-sm overflow-hidden">
+        <div className="w-full flex items-center justify-between pb-2 shrink-0">
+          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-700 truncate">
+            <ImageIcon className="w-3.5 h-3.5" />
+            <span>[RAW ORTHOMOSAIC (ORI)] 5cm GSD</span>
+          </div>
+          <div className="flex items-center gap-1 shrink-0 bg-slate-50 rounded-lg border border-slate-200 p-0.5">
+            <button
+              onClick={(e) => { e.stopPropagation(); setLeftViewMode("RGB"); }}
+              className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'RGB' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={inputImageUrl}
-                alt="Input Aerial Capture"
-                className="w-full h-full object-contain pointer-events-none"
-              />
-
-              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-zinc-800 text-[10px] font-mono text-zinc-300">
-                ORIGINAL IMAGE
-              </div>
-            </div>
+              RGB Optical
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setLeftViewMode("DSM"); }}
+              className={`text-[10px] font-semibold py-0.5 px-2 rounded transition-colors ${leftViewMode === 'DSM' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            >
+              DSM Surface
+            </button>
           </div>
-        )}
+        </div>
 
-        {/* Right Side: Mapped Image + Interactive SVG Vector Overlay Workspace */}
-        <div className="flex flex-col items-center">
-          <div className="w-full flex items-center justify-between pb-2 px-1 text-xs font-mono">
-            <div className="flex items-center gap-1.5 text-emerald-400">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="font-semibold">AI MAPPED CADASTRAL WORKSPACE</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowDiagnostics((prev) => !prev)}
-                title="Toggle Spatial Registration Diagnostic Panel"
-                className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded border transition-colors ${
-                  showDiagnostics
-                    ? "border-emerald-500/60 bg-emerald-950/60 text-emerald-300"
-                    : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200"
-                }`}
-              >
-                <Activity className="w-3 h-3" />
-                <span>Diag</span>
-              </button>
-              <span className="text-[11px] text-zinc-400">
-                {geojson.features.length} Features
+        <div
+          className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center group"
+          style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
+          onWheel={handleWheel}
+          onMouseDown={handleMapMouseDown}
+          onMouseMove={handleMapMouseMove}
+          onMouseUp={handleMapMouseUp}
+          onMouseLeave={handleMapMouseUp}
+        >
+          <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={inputImageUrl || imageUrl || "/hero-cadastral.jpg"}
+              alt="Input Aerial Capture"
+              className="w-full h-full object-contain pointer-events-none transition-all duration-300"
+              style={leftViewMode === "DSM" ? { filter: 'contrast(180%) invert(20%) hue-rotate(190deg) brightness(90%)' } : {}}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side: Mapped Image + Interactive SVG Vector Overlay Workspace */}
+      <div className="w-full h-full max-h-full flex flex-col bg-slate-950 rounded-2xl border-2 border-slate-700/80 p-2 shadow-xl overflow-hidden">
+        <div className="w-full flex items-center justify-between pb-2 shrink-0 bg-[#0f172a] px-3 py-2 border-b border-slate-800 rounded-t-xl -mt-2 -mx-2 mb-2 w-[calc(100%+16px)]">
+          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-200 truncate">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+            <span>[STATUTORY CADASTRE] LADM ISO 19152</span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#10b981" }}></div> PARCEL
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#f97316" }}></div> BUILDING
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#facc15" }}></div> ROAD
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#0284c7" }}></div> WATER
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[8px]" style={{ borderBottomColor: "#ef4444" }}></div> ENCROACHMENT
               </span>
             </div>
           </div>
+        </div>
 
-          <div
-            className="relative rounded-xl overflow-hidden shadow-2xl border border-zinc-800 bg-black flex items-center justify-center"
-            style={{
-              aspectRatio: "1/1",
-              width: "min(72vh, 42vw, 512px)",
-              height: "min(72vh, 42vw, 512px)",
-            }}
-          >
+        <div
+          className="relative flex-1 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center"
+          style={{ width: "100%", height: "100%", cursor: isDraggingMap ? "grabbing" : "default" }}
+          onWheel={handleWheel}
+          onMouseDown={handleMapMouseDown}
+          onMouseMove={handleMapMouseMove}
+          onMouseUp={handleMapMouseUp}
+          onMouseLeave={handleMapMouseUp}
+        >
+          <div style={{ transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.scale})`, transition: isDraggingMap ? 'none' : 'transform 0.1s ease-out', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             {/* Visual Map Image (Source of Truth raster representation) */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -342,29 +486,45 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
             <svg
               ref={svgRef}
               viewBox={`0 0 ${viewWidth} ${viewHeight}`}
-              className={`absolute inset-0 w-full h-full z-10 ${
-                mode === "add_polygon" || mode === "add_line"
-                  ? "cursor-crosshair"
-                  : mode === "edit"
-                  ? "cursor-default"
-                  : "cursor-pointer"
-              }`}
+              className={`absolute inset-0 w-full h-full z-10 ${mode === "add_polygon" || mode === "add_line"
+                ? "cursor-crosshair"
+                : mode === "edit"
+                  ? (isDraggingMap ? "cursor-grabbing" : "cursor-grab")
+                  : (isDraggingMap ? "cursor-grabbing" : "cursor-pointer")
+                }`}
               onClick={handleSvgClick}
               onDoubleClick={handleSvgDoubleClick}
               onMouseMove={handleMouseMove}
             >
+              <defs>
+                <pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="8" height="8">
+                  <path
+                    d="M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4"
+                    stroke="#ef4444"
+                    strokeWidth="2"
+                    strokeOpacity="0.8"
+                  />
+                </pattern>
+              </defs>
+
               {/* Render Features */}
               {svgFeatures.map((feat) => {
                 const isSelected = feat.id === selectedFeatureId;
                 const isHovered = feat.id === hoveredFeatureId;
+                const isEncroaching = overlappingFeatureIds.has(feat.id);
+
+                // Do NOT override the whole style for encroaching base features. Encroachment patches are rendered separately.
                 const style = FEATURE_COLORS[feat.type] || FEATURE_COLORS.default;
 
                 // Stroke scaling relative to viewBox dimension
                 const baseScale = viewWidth / 512;
-                const strokeColor = isSelected ? "#38bdf8" : style.stroke;
-                const fillColor = isSelected ? "#0284c7" : style.fill;
-                const fillOpacity = isSelected ? 0.45 : isHovered ? 0.3 : style.fillOpacity;
-                const strokeWidth = (isSelected ? 3.5 : isHovered ? 2.5 : style.strokeWidth) * baseScale;
+                const isSelectedBuilding = isSelected && feat.type === "building";
+                const strokeColor = isSelectedBuilding ? "#e11d48" : (isSelected ? "#facc15" : style.stroke);
+                const fillColor = isSelectedBuilding && !isEncroaching ? "rgba(225, 29, 72, 0.25)" : (isSelected && !isEncroaching ? "rgba(250, 204, 21, 0.25)" : style.fill);
+                const fillOpacity = isSelected ? 1 : isHovered ? 0.3 : style.fillOpacity;
+                const strokeWidth = (isSelectedBuilding ? 3 : isSelected ? 3.5 : isHovered ? 2.5 : style.strokeWidth) * baseScale;
+                const filter = isSelectedBuilding ? "drop-shadow(0 0 8px rgba(225, 29, 72, 0.8))" : (isSelected ? "drop-shadow(0 0 8px rgba(250, 204, 21, 0.8))" : "none");
+                const dashArray = isSelectedBuilding ? `${2 * baseScale}, ${2 * baseScale}` : (style.dashArray ? style.dashArray : undefined);
 
                 if (feat.geometryType === "LineString") {
                   return (
@@ -376,7 +536,9 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                       strokeWidth={strokeWidth}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="transition-all duration-150"
+                      strokeDasharray={dashArray}
+                      style={{ filter }}
+                      className={`transition-all duration-150 ${isEncroaching ? "animate-pulse" : ""}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectFeature(feat.id);
@@ -397,14 +559,37 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                         fillOpacity={fillOpacity}
                         stroke={strokeColor}
                         strokeWidth={strokeWidth}
+                        strokeDasharray={dashArray}
                         strokeLinejoin="round"
-                        className="transition-all duration-150"
+                        className={`transition-all duration-150 ${isEncroaching ? "animate-pulse" : ""}`}
+                        style={{ filter }}
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelectFeature(feat.id);
                         }}
                         onMouseEnter={() => setHoveredFeatureId(feat.id)}
                         onMouseLeave={() => setHoveredFeatureId(null)}
+                      />
+                    ))}
+                  </g>
+                );
+              })}
+
+              {/* Render Encroachment Intersections (Hatched / Red Patches) */}
+              {overlapSvgFeatures.map((feat) => {
+                const style = FEATURE_COLORS.encroachment;
+                const baseScale = viewWidth / 512;
+                return (
+                  <g key={feat.id}>
+                    {feat.svgPaths.map((pathD: string, pIdx: number) => (
+                      <path
+                        key={pIdx}
+                        d={pathD}
+                        fill="url(#diagonalHatch)"
+                        fillOpacity="0.8"
+                        stroke={style.stroke}
+                        strokeWidth={1.5 * baseScale}
+                        className="pointer-events-none"
                       />
                     ))}
                   </g>
@@ -427,10 +612,10 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                         key={`${rIdx}-${vIdx}`}
                         cx={pt[0]}
                         cy={pt[1]}
-                        r={(isDragging ? 7 : 5) * baseScale}
-                        fill={isDragging ? "#38bdf8" : "#ffffff"}
-                        stroke="#0284c7"
-                        strokeWidth={2 * baseScale}
+                        r={4 * baseScale}
+                        fill="#ffffff"
+                        stroke="#3b82f6"
+                        strokeWidth={1.5 * baseScale}
                         className="cursor-grab active:cursor-grabbing hover:scale-125 transition-transform"
                         onMouseDown={(e) => {
                           e.stopPropagation();
@@ -444,6 +629,58 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                     );
                   })
                 )}
+
+              {/* Centroid Marker for Selected Feature */}
+              {selectedFeature && selectedFeature.rings.length > 0 && (
+                (() => {
+                  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                  selectedFeature.rings.forEach(ring => {
+                    ring.forEach(pt => {
+                      if (pt[0] < minX) minX = pt[0];
+                      if (pt[1] < minY) minY = pt[1];
+                      if (pt[0] > maxX) maxX = pt[0];
+                      if (pt[1] > maxY) maxY = pt[1];
+                    });
+                  });
+                  const cx = (minX + maxX) / 2;
+                  const cy = (minY + maxY) / 2;
+
+                  return (
+                    <g transform={`translate(${cx}, ${cy})`} className="pointer-events-none">
+                      <circle cx="0" cy="0" r="4" fill="#facc15" className="animate-ping opacity-75" />
+                      <circle cx="0" cy="0" r="2" fill="#facc15" />
+                      <rect x="-60" y="-18" width="120" height="14" fill="#0f172a" rx="2" stroke="#facc15" strokeWidth="0.8" opacity="0.9" />
+                      <text x="0" y="-8.5" fontSize="7" fill="#facc15" textAnchor="middle" fontFamily="monospace" fontWeight="bold">
+                        Khasra {String(selectedFeature.id).substring(0, 10).replace('khasra_', '')} [Selected]
+                      </text>
+                    </g>
+                  );
+                })()
+              )}
+
+              {/* Visual GCP & CORS Markers */}
+              {showGCP && (
+                <>
+                  <g transform={`translate(${viewWidth * 0.8}, ${viewHeight * 0.15})`} className="pointer-events-none">
+                    <circle cx="0" cy="0" r="10" fill="none" stroke="#ef4444" strokeWidth="1" className="animate-ping" />
+                    <circle cx="0" cy="0" r="4" fill="white" stroke="#ef4444" strokeWidth="1.5" />
+                    <path d="M-6,0 L6,0 M0,-6 L0,6" stroke="#ef4444" strokeWidth="1" />
+                    <rect x="8" y="-14" width="165" height="14" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(185, 28, 28, 0.8)" strokeWidth="1" />
+                    <text x="14" y="-4" fontSize="7" fill="#fca5a5" fontFamily="monospace" fontWeight="bold">
+                      ▲ CORS-MP-BHP-04 [Datum: 501.57m AMSL]
+                    </text>
+                  </g>
+                  <g transform={`translate(${viewWidth * 0.18}, ${viewHeight * 0.85})`} className="pointer-events-none">
+                    <polygon points="0,-6 5.2,3 -5.2,3" fill="none" stroke="#06b6d4" strokeWidth="1.5" />
+                    <circle cx="0" cy="0" r="1.5" fill="#06b6d4" />
+                    <rect x="8" y="-10" width="110" height="12" fill="rgba(2, 6, 23, 0.9)" rx="2" stroke="rgba(14, 116, 144, 0.8)" strokeWidth="1" />
+                    <text x="14" y="-1.5" fontSize="7" fill="#67e8f9" fontFamily="monospace" fontWeight="bold">
+                      ▲ GCP-HZR-02 [Base Anchor]
+                    </text>
+                  </g>
+                </>
+              )}
+
 
               {/* User Drawing In-Progress Preview */}
               {drawingPoints.length > 0 && (
@@ -492,45 +729,56 @@ export const MappingViewer: React.FC<MappingViewerProps> = ({
                   ))}
                 </g>
               )}
+
+              {/* Survey Tile Neatline Boundary */}
+              <g className="pointer-events-none">
+                <line x1={0} y1={0} x2={0} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={viewWidth} y1={0} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={0} y1={0} x2={viewWidth} y2={0} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+                <line x1={0} y1={viewHeight} x2={viewWidth} y2={viewHeight} stroke="#64748b" strokeWidth={5 * (viewWidth / 512)} strokeDasharray={`${8 * (viewWidth / 512)} ${6 * (viewWidth / 512)}`} />
+
+                <rect x={10 * (viewWidth / 512)} y={10 * (viewWidth / 512)} width={200 * (viewWidth / 512)} height={20 * (viewWidth / 512)} fill="white" fillOpacity="0.85" rx={4 * (viewWidth / 512)} />
+                <text x={16 * (viewWidth / 512)} y={24 * (viewWidth / 512)} fontSize={11 * (viewWidth / 512)} fill="#475569" fontWeight="bold" fontFamily="sans-serif">
+                  Survey Tile Boundary (Neatline)
+                </text>
+              </g>
             </svg>
-
-            {/* Top Badge */}
-            <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-zinc-800 text-[10px] font-mono text-emerald-400 z-20">
-              VECTOR CADASTRE
-            </div>
-
-            {/* Visual Diagnostics Panel (Section 20) */}
-            {showDiagnostics && (
-              <div className="absolute top-10 left-2.5 z-30 p-3 rounded-lg bg-black/85 backdrop-blur-md border border-emerald-500/40 text-[10px] font-mono text-zinc-300 shadow-2xl space-y-1 max-w-[240px]">
-                <div className="text-emerald-400 font-bold border-b border-zinc-800 pb-1 flex justify-between">
-                  <span>SPATIAL REGISTRATION</span>
-                  <button onClick={() => setShowDiagnostics(false)} className="text-zinc-500 hover:text-zinc-300">✕</button>
-                </div>
-                <div><span className="text-zinc-500">TILE:</span> <span className="text-zinc-200">{geojson.tile_id || "N/A"}</span></div>
-                <div><span className="text-zinc-500">RASTER:</span> <span className="text-zinc-200">{rasterDims.width} × {rasterDims.height}</span></div>
-                <div><span className="text-zinc-500">CRS:</span> <span className="text-emerald-300">{geojson.crs?.properties?.name || (isPixel ? "Pixel_Space" : "EPSG:32643")}</span></div>
-                <div className="pt-1 border-t border-zinc-800/80 text-[9px] text-zinc-400">
-                  <div>minX: {bbox.minX.toFixed(2)}</div>
-                  <div>maxX: {bbox.maxX.toFixed(2)}</div>
-                  <div>minY: {bbox.minY.toFixed(2)}</div>
-                  <div>maxY: {bbox.maxY.toFixed(2)}</div>
-                </div>
-                <div className="pt-1 border-t border-zinc-800/80">
-                  <div><span className="text-zinc-500">FEATURES:</span> <span className="text-zinc-200">{geojson.features.length}</span></div>
-                  <div><span className="text-zinc-500">SVG VIEWBOX:</span> <span className="text-zinc-200">{viewWidth} × {viewHeight}</span></div>
-                </div>
-              </div>
-            )}
-
-            {/* Drawing Helper Hint Badge */}
-            {(mode === "add_polygon" || mode === "add_line") && (
-              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-lg bg-zinc-900/90 border border-zinc-700 text-xs text-zinc-200 font-mono shadow-lg backdrop-blur-md">
-                {mode === "add_polygon"
-                  ? "Click points • Double-click to close Polygon"
-                  : "Click points • Double-click to complete Line"}
-              </div>
-            )}
           </div>
+          <div className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-white border border-emerald-200 text-[10px] font-bold text-emerald-700 z-20 shadow-sm flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3" /> Validated
+          </div>
+
+          {/* Visual Diagnostics Panel (Section 20) */}
+          {showDiagnostics && (
+            <div className="absolute top-12 left-3 z-30 p-3.5 rounded-lg bg-white border border-emerald-300 text-[11px] font-mono text-slate-700 shadow-lg space-y-1.5 max-w-[260px]">
+              <div className="text-emerald-800 font-bold border-b border-slate-200 pb-1.5 flex justify-between">
+                <span>SPATIAL REGISTRATION</span>
+                <button onClick={() => setShowDiagnostics(false)} className="text-slate-400 hover:text-slate-700">✕</button>
+              </div>
+              <div><span className="text-slate-500 font-bold">TILE:</span> <span>{geojson.tile_id || "N/A"}</span></div>
+              <div><span className="text-slate-500 font-bold">RASTER:</span> <span>{rasterDims.width} × {rasterDims.height}</span></div>
+              <div><span className="text-slate-500 font-bold">CRS:</span> <span className="text-emerald-700">{geojson.crs?.properties?.name || (isPixel ? "Pixel_Space" : "EPSG:32643")}</span></div>
+              <div className="pt-1.5 border-t border-slate-200 text-[10px] text-slate-600">
+                <div>minX: {bbox.minX.toFixed(2)}</div>
+                <div>maxX: {bbox.maxX.toFixed(2)}</div>
+                <div>minY: {bbox.minY.toFixed(2)}</div>
+                <div>maxY: {bbox.maxY.toFixed(2)}</div>
+              </div>
+              <div className="pt-1.5 border-t border-slate-200">
+                <div><span className="text-slate-500 font-bold">FEATURES:</span> <span>{geojson.features.length}</span></div>
+                <div><span className="text-slate-500 font-bold">SVG VIEWBOX:</span> <span>{viewWidth} × {viewHeight}</span></div>
+              </div>
+            </div>
+          )}
+
+          {/* Drawing Helper Hint Badge */}
+          {(mode === "add_polygon" || mode === "add_line") && (
+            <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-xl bg-white/95 border border-slate-200 text-xs text-slate-700 font-mono shadow-lg backdrop-blur-md">
+              {mode === "add_polygon"
+                ? "Click points • Double-click to close Polygon"
+                : "Click points • Double-click to complete Line"}
+            </div>
+          )}
         </div>
       </div>
     </div>
